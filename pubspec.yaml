@@ -35,6 +35,9 @@ dependencies:
 
   flutter_secure_storage: ^9.2.4
 
+flutter:
+  uses-material-design: true
+
 dev_dependencies:
 
   flutter_test:
