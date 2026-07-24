@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/config/app_config.dart';
 import 'router/app_router.dart';
 import 'theme/app_theme.dart';
 
-class FloatwiseApp extends ConsumerWidget {
-  const FloatwiseApp({super.key});
+class FloatWiseApp extends StatelessWidget {
+  const FloatWiseApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final router = ref.watch(routerProvider);
-
+  Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Floatwise',
+      title: AppConfig.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.system,
-      routerConfig: router,
+      routerConfig: appRouter,
     );
   }
 }
