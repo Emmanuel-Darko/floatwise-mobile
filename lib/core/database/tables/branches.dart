@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+@DataClassName('Branch')
 class Branches extends Table {
   TextColumn get id => text()();
 
