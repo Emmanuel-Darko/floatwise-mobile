@@ -9,6 +9,8 @@ import 'tables/daily_sessions.dart';
 import 'tables/provider_transactions.dart';
 import 'tables/ledger_events.dart';
 import 'dao/business_dao.dart';
+import 'dao/branch_dao.dart';
+import 'dao/till_dao.dart';
 
 part 'app_database.g.dart';
 
@@ -26,6 +28,8 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(openConnection());
 
   late final businessDao = BusinessDao(this);
+  late final branchDao = BranchDao(this);
+  late final tillDao = TillDao(this);
 
   @override
   int get schemaVersion => 1;
