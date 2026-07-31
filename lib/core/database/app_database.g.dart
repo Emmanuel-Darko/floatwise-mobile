@@ -311,7 +311,7 @@ class BusinessesCompanion extends UpdateCompanion<BusinessesData> {
   }
 }
 
-class $BranchesTable extends Branches with TableInfo<$BranchesTable, Branche> {
+class $BranchesTable extends Branches with TableInfo<$BranchesTable, Branch> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -365,7 +365,7 @@ class $BranchesTable extends Branches with TableInfo<$BranchesTable, Branche> {
   static const String $name = 'branches';
   @override
   VerificationContext validateIntegrity(
-    Insertable<Branche> instance, {
+    Insertable<Branch> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -405,9 +405,9 @@ class $BranchesTable extends Branches with TableInfo<$BranchesTable, Branche> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Branche map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Branch map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Branche(
+    return Branch(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}id'],
@@ -433,12 +433,12 @@ class $BranchesTable extends Branches with TableInfo<$BranchesTable, Branche> {
   }
 }
 
-class Branche extends DataClass implements Insertable<Branche> {
+class Branch extends DataClass implements Insertable<Branch> {
   final String id;
   final String businessId;
   final String name;
   final DateTime createdAt;
-  const Branche({
+  const Branch({
     required this.id,
     required this.businessId,
     required this.name,
@@ -463,12 +463,12 @@ class Branche extends DataClass implements Insertable<Branche> {
     );
   }
 
-  factory Branche.fromJson(
+  factory Branch.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Branche(
+    return Branch(
       id: serializer.fromJson<String>(json['id']),
       businessId: serializer.fromJson<String>(json['businessId']),
       name: serializer.fromJson<String>(json['name']),
@@ -486,19 +486,19 @@ class Branche extends DataClass implements Insertable<Branche> {
     };
   }
 
-  Branche copyWith({
+  Branch copyWith({
     String? id,
     String? businessId,
     String? name,
     DateTime? createdAt,
-  }) => Branche(
+  }) => Branch(
     id: id ?? this.id,
     businessId: businessId ?? this.businessId,
     name: name ?? this.name,
     createdAt: createdAt ?? this.createdAt,
   );
-  Branche copyWithCompanion(BranchesCompanion data) {
-    return Branche(
+  Branch copyWithCompanion(BranchesCompanion data) {
+    return Branch(
       id: data.id.present ? data.id.value : this.id,
       businessId: data.businessId.present
           ? data.businessId.value
@@ -510,7 +510,7 @@ class Branche extends DataClass implements Insertable<Branche> {
 
   @override
   String toString() {
-    return (StringBuffer('Branche(')
+    return (StringBuffer('Branch(')
           ..write('id: $id, ')
           ..write('businessId: $businessId, ')
           ..write('name: $name, ')
@@ -524,14 +524,14 @@ class Branche extends DataClass implements Insertable<Branche> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Branche &&
+      (other is Branch &&
           other.id == this.id &&
           other.businessId == this.businessId &&
           other.name == this.name &&
           other.createdAt == this.createdAt);
 }
 
-class BranchesCompanion extends UpdateCompanion<Branche> {
+class BranchesCompanion extends UpdateCompanion<Branch> {
   final Value<String> id;
   final Value<String> businessId;
   final Value<String> name;
@@ -554,7 +554,7 @@ class BranchesCompanion extends UpdateCompanion<Branche> {
        businessId = Value(businessId),
        name = Value(name),
        createdAt = Value(createdAt);
-  static Insertable<Branche> custom({
+  static Insertable<Branch> custom({
     Expression<String>? id,
     Expression<String>? businessId,
     Expression<String>? name,
@@ -3044,14 +3044,14 @@ class $$BranchesTableTableManager
         RootTableManager<
           _$AppDatabase,
           $BranchesTable,
-          Branche,
+          Branch,
           $$BranchesTableFilterComposer,
           $$BranchesTableOrderingComposer,
           $$BranchesTableAnnotationComposer,
           $$BranchesTableCreateCompanionBuilder,
           $$BranchesTableUpdateCompanionBuilder,
-          (Branche, BaseReferences<_$AppDatabase, $BranchesTable, Branche>),
-          Branche,
+          (Branch, BaseReferences<_$AppDatabase, $BranchesTable, Branch>),
+          Branch,
           PrefetchHooks Function()
         > {
   $$BranchesTableTableManager(_$AppDatabase db, $BranchesTable table)
@@ -3105,14 +3105,14 @@ typedef $$BranchesTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $BranchesTable,
-      Branche,
+      Branch,
       $$BranchesTableFilterComposer,
       $$BranchesTableOrderingComposer,
       $$BranchesTableAnnotationComposer,
       $$BranchesTableCreateCompanionBuilder,
       $$BranchesTableUpdateCompanionBuilder,
-      (Branche, BaseReferences<_$AppDatabase, $BranchesTable, Branche>),
-      Branche,
+      (Branch, BaseReferences<_$AppDatabase, $BranchesTable, Branch>),
+      Branch,
       PrefetchHooks Function()
     >;
 typedef $$TillsTableCreateCompanionBuilder =
