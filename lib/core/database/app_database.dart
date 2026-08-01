@@ -11,6 +11,7 @@ import 'tables/ledger_events.dart';
 import 'dao/business_dao.dart';
 import 'dao/branch_dao.dart';
 import 'dao/till_dao.dart';
+import 'dao/daily_session_dao.dart';
 
 part 'app_database.g.dart';
 
@@ -30,6 +31,7 @@ class AppDatabase extends _$AppDatabase {
   late final businessDao = BusinessDao(this);
   late final branchDao = BranchDao(this);
   late final tillDao = TillDao(this);
+  late final dailySessionDao = DailySessionDao(this);
 
   @override
   int get schemaVersion => 1;
