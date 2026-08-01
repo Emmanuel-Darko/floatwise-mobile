@@ -1,5 +1,5 @@
 import '../../domain/entities/till_entity.dart';
-import '../../domain/repositories/till_repository.dart';
+import 'till_repository.dart';
 
 import '../../../../core/database/app_database.dart';
 import '../../../../shared/enums/mobile_network.dart';
