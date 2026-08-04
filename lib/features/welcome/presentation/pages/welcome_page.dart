@@ -9,6 +9,8 @@ import '../../../business/data/repository/business_repository_impl.dart';
 import '../../../business/domain/entities/business_entity.dart';
 import '../../../daily_session/domain/entities/daily_session_entity.dart';
 import '../../../daily_session/presentation/providers/daily_session_repository_provider.dart';
+import '../../../settings/domain/entities/app_config_entity.dart';
+import '../../../settings/presentation/providers/app_config_repository_provider.dart';
 import '../../../../shared/enums/mobile_network.dart';
 import '../../../../shared/enums/till_status.dart';
 import '../../../till/domain/entities/till_entity.dart';
@@ -213,6 +215,34 @@ class WelcomePage extends ConsumerWidget {
                     );
                   },
                   child: const Text('🧪 Test Session Rule'),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: () async {
+                    final config = await ref.read(
+                      appConfigRepositoryProvider.future,
+                    );
+                    final completed = await config.hasCompletedSetup();
+
+                    final next = !completed;
+                    await config.saveConfig(
+                      AppConfigEntity(
+                        hasCompletedSetup: next,
+                        currentBusinessId: null,
+                        currentBranchId: null,
+                        currentTillId: null,
+                      ),
+                    );
+                    debugPrint(
+                      '>>> hasCompletedSetup set to: $next',
+                    );
+                  },
+                  child: const Text('🧪 Toggle Setup'),
                 ),
               ),
 
