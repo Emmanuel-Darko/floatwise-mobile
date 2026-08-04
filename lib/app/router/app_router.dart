@@ -1,13 +1,39 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/dashboard/presentation/pages/dashboard_page.dart';
+import '../../features/setup/presentation/pages/setup_wizard_page.dart';
 import '../../features/welcome/presentation/pages/welcome_page.dart';
+import '../../features/settings/presentation/providers/app_config_repository_provider.dart';
 
-final appRouter = GoRouter(
-  initialLocation: '/',
-  routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const WelcomePage(),
-    ),
-  ],
-);
+final appRouterProvider = Provider<GoRouter>((ref) {
+  return GoRouter(
+    initialLocation: '/',
+    redirect: (context, state) async {
+      final config =
+          await ref.read(appConfigRepositoryProvider.future);
+
+      final hasCompletedSetup = await config.hasCompletedSetup();
+
+      final atWelcome = state.matchedLocation == '/';
+
+      if (hasCompletedSetup && atWelcome) return '/dashboard';
+
+      return null;
+    },
+    routes: [
+      GoRoute(
+        path: '/',
+        builder: (context, state) => const WelcomePage(),
+      ),
+      GoRoute(
+        path: '/dashboard',
+        builder: (context, state) => const DashboardPage(),
+      ),
+      GoRoute(
+        path: '/setup',
+        builder: (context, state) => const SetupWizardPage(),
+      ),
+    ],
+  );
+});
