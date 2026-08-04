@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/dashboard/presentation/pages/dashboard_page.dart';
-import '../../features/setup/presentation/pages/setup_wizard_page.dart';
+import '../../features/setup/presentation/screens/setup_wizard_screen.dart';
 import '../../features/welcome/presentation/pages/welcome_page.dart';
 import '../../features/settings/presentation/providers/app_config_repository_provider.dart';
 
@@ -32,7 +32,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/setup',
-        builder: (context, state) => const SetupWizardPage(),
+        builder: (context, state) => const SetupWizardScreen(),
       ),
     ],
   );
