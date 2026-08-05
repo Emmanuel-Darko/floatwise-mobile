@@ -15,9 +15,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       final hasCompletedSetup = await config.hasCompletedSetup();
 
-      final atWelcome = state.matchedLocation == '/';
+      final location = state.matchedLocation;
 
-      if (hasCompletedSetup && atWelcome) return '/dashboard';
+      if (hasCompletedSetup) {
+        if (location == '/' || location == '/setup') return '/dashboard';
+        return null;
+      }
+
+      if (location == '/dashboard') return '/';
 
       return null;
     },

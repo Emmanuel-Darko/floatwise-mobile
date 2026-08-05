@@ -1,17 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/utils/formatters.dart';
 import '../../../../shared/enums/mobile_network.dart';
 import '../providers/setup_controller_provider.dart';
+import '../providers/setup_service_provider.dart';
 
-class ReviewStepScreen extends ConsumerWidget {
-  const ReviewStepScreen({super.key, required this.onFinish});
-
-  final VoidCallback onFinish;
+class ReviewStepScreen extends ConsumerStatefulWidget {
+  const ReviewStepScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ReviewStepScreen> createState() => _ReviewStepScreenState();
+}
+
+class _ReviewStepScreenState extends ConsumerState<ReviewStepScreen> {
+  bool _busy = false;
+
+  Future<void> _finish() async {
+    setState(() => _busy = true);
+
+    try {
+      final setupService = await ref.read(setupServiceProvider.future);
+      final state = ref.read(setupControllerProvider);
+
+      await setupService.completeSetup(state: state);
+
+      if (mounted) {
+        context.go('/dashboard');
+      }
+    } catch (_) {
+      if (!mounted) return;
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Setup Failed'),
+          content: const Text('Could not save your setup. Please try again.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(setupControllerProvider);
     final theme = Theme.of(context);
     final business = state.business;
@@ -67,8 +106,14 @@ class ReviewStepScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           FilledButton(
-            onPressed: ready ? onFinish : null,
-            child: const Text('Finish Setup'),
+            onPressed: ready && !_busy ? _finish : null,
+            child: _busy
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Text('Finish Setup'),
           ),
         ],
       ),
