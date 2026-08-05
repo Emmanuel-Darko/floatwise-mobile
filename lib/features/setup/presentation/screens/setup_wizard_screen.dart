@@ -43,7 +43,7 @@ class _SetupWizardScreenState extends State<SetupWizardScreen> {
                   BranchStepScreen(onNext: _goToNext),
                   TillStepScreen(onNext: _goToNext),
                   OpeningBalanceStepScreen(onNext: _goToNext),
-                  ReviewStepScreen(onFinish: _goToNext),
+                  const ReviewStepScreen(),
                 ],
               ),
             ),
