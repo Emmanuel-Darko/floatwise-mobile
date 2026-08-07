@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../sms/presentation/providers/sms_permission_provider.dart';
 
-class QuickActionsCard extends StatelessWidget {
+class QuickActionsCard extends ConsumerWidget {
   const QuickActionsCard({super.key});
 
   void _showComingSoon(BuildContext context, String action) {
@@ -16,8 +19,17 @@ class QuickActionsCard extends StatelessWidget {
       );
   }
 
+  Future<void> _importSms(BuildContext context, WidgetRef ref) async {
+    final service = ref.read(smsPermissionProvider);
+    final hasPermission = await service.hasPermission();
+
+    if (!context.mounted) return;
+
+    context.go(hasPermission ? '/sms/import' : '/sms/permission');
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
     return Card(
@@ -40,7 +52,7 @@ class QuickActionsCard extends StatelessWidget {
                   child: _ActionButton(
                     icon: Icons.sms_outlined,
                     label: 'Import SMS',
-                    onPressed: () => _showComingSoon(context, 'Import SMS'),
+                    onPressed: () => _importSms(context, ref),
                   ),
                 ),
                 const SizedBox(width: 12),
