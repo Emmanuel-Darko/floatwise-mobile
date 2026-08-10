@@ -43,6 +43,8 @@ dependencies:
 
   json_annotation: ^4.9.0
   permission_handler: ^13.0.0
+  flutter_sms_inbox: ^1.0.5
+  crypto: ^3.0.7
 
 flutter:
   uses-material-design: true
