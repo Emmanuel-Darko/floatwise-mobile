@@ -27,7 +27,7 @@ class _ReviewStepScreenState extends ConsumerState<ReviewStepScreen> {
       await setupService.completeSetup(state: state);
 
       if (mounted) {
-        context.go('/dashboard');
+        context.go('/sms/import');
       }
     } catch (_) {
       if (!mounted) return;
