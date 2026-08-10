@@ -2733,6 +2733,574 @@ class LedgerEventsCompanion extends UpdateCompanion<LedgerEvent> {
   }
 }
 
+class $RawSmsMessagesTable extends RawSmsMessages
+    with TableInfo<$RawSmsMessagesTable, RawSmsMessage> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RawSmsMessagesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _senderMeta = const VerificationMeta('sender');
+  @override
+  late final GeneratedColumn<String> sender = GeneratedColumn<String>(
+    'sender',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _addressMeta = const VerificationMeta(
+    'address',
+  );
+  @override
+  late final GeneratedColumn<String> address = GeneratedColumn<String>(
+    'address',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bodyMeta = const VerificationMeta('body');
+  @override
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+    'body',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _receivedAtMeta = const VerificationMeta(
+    'receivedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> receivedAt = GeneratedColumn<DateTime>(
+    'received_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _importedAtMeta = const VerificationMeta(
+    'importedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> importedAt = GeneratedColumn<DateTime>(
+    'imported_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _smsHashMeta = const VerificationMeta(
+    'smsHash',
+  );
+  @override
+  late final GeneratedColumn<String> smsHash = GeneratedColumn<String>(
+    'sms_hash',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isParsedMeta = const VerificationMeta(
+    'isParsed',
+  );
+  @override
+  late final GeneratedColumn<bool> isParsed = GeneratedColumn<bool>(
+    'is_parsed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_parsed" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _parseErrorMeta = const VerificationMeta(
+    'parseError',
+  );
+  @override
+  late final GeneratedColumn<String> parseError = GeneratedColumn<String>(
+    'parse_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    sender,
+    address,
+    body,
+    receivedAt,
+    importedAt,
+    smsHash,
+    isParsed,
+    parseError,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'raw_sms_messages';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<RawSmsMessage> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('sender')) {
+      context.handle(
+        _senderMeta,
+        sender.isAcceptableOrUnknown(data['sender']!, _senderMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_senderMeta);
+    }
+    if (data.containsKey('address')) {
+      context.handle(
+        _addressMeta,
+        address.isAcceptableOrUnknown(data['address']!, _addressMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_addressMeta);
+    }
+    if (data.containsKey('body')) {
+      context.handle(
+        _bodyMeta,
+        body.isAcceptableOrUnknown(data['body']!, _bodyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bodyMeta);
+    }
+    if (data.containsKey('received_at')) {
+      context.handle(
+        _receivedAtMeta,
+        receivedAt.isAcceptableOrUnknown(data['received_at']!, _receivedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_receivedAtMeta);
+    }
+    if (data.containsKey('imported_at')) {
+      context.handle(
+        _importedAtMeta,
+        importedAt.isAcceptableOrUnknown(data['imported_at']!, _importedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_importedAtMeta);
+    }
+    if (data.containsKey('sms_hash')) {
+      context.handle(
+        _smsHashMeta,
+        smsHash.isAcceptableOrUnknown(data['sms_hash']!, _smsHashMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_smsHashMeta);
+    }
+    if (data.containsKey('is_parsed')) {
+      context.handle(
+        _isParsedMeta,
+        isParsed.isAcceptableOrUnknown(data['is_parsed']!, _isParsedMeta),
+      );
+    }
+    if (data.containsKey('parse_error')) {
+      context.handle(
+        _parseErrorMeta,
+        parseError.isAcceptableOrUnknown(data['parse_error']!, _parseErrorMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {smsHash},
+  ];
+  @override
+  RawSmsMessage map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RawSmsMessage(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      sender: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sender'],
+      )!,
+      address: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}address'],
+      )!,
+      body: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}body'],
+      )!,
+      receivedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}received_at'],
+      )!,
+      importedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}imported_at'],
+      )!,
+      smsHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sms_hash'],
+      )!,
+      isParsed: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_parsed'],
+      )!,
+      parseError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}parse_error'],
+      ),
+    );
+  }
+
+  @override
+  $RawSmsMessagesTable createAlias(String alias) {
+    return $RawSmsMessagesTable(attachedDatabase, alias);
+  }
+}
+
+class RawSmsMessage extends DataClass implements Insertable<RawSmsMessage> {
+  final String id;
+  final String sender;
+  final String address;
+  final String body;
+  final DateTime receivedAt;
+  final DateTime importedAt;
+  final String smsHash;
+  final bool isParsed;
+  final String? parseError;
+  const RawSmsMessage({
+    required this.id,
+    required this.sender,
+    required this.address,
+    required this.body,
+    required this.receivedAt,
+    required this.importedAt,
+    required this.smsHash,
+    required this.isParsed,
+    this.parseError,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['sender'] = Variable<String>(sender);
+    map['address'] = Variable<String>(address);
+    map['body'] = Variable<String>(body);
+    map['received_at'] = Variable<DateTime>(receivedAt);
+    map['imported_at'] = Variable<DateTime>(importedAt);
+    map['sms_hash'] = Variable<String>(smsHash);
+    map['is_parsed'] = Variable<bool>(isParsed);
+    if (!nullToAbsent || parseError != null) {
+      map['parse_error'] = Variable<String>(parseError);
+    }
+    return map;
+  }
+
+  RawSmsMessagesCompanion toCompanion(bool nullToAbsent) {
+    return RawSmsMessagesCompanion(
+      id: Value(id),
+      sender: Value(sender),
+      address: Value(address),
+      body: Value(body),
+      receivedAt: Value(receivedAt),
+      importedAt: Value(importedAt),
+      smsHash: Value(smsHash),
+      isParsed: Value(isParsed),
+      parseError: parseError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(parseError),
+    );
+  }
+
+  factory RawSmsMessage.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RawSmsMessage(
+      id: serializer.fromJson<String>(json['id']),
+      sender: serializer.fromJson<String>(json['sender']),
+      address: serializer.fromJson<String>(json['address']),
+      body: serializer.fromJson<String>(json['body']),
+      receivedAt: serializer.fromJson<DateTime>(json['receivedAt']),
+      importedAt: serializer.fromJson<DateTime>(json['importedAt']),
+      smsHash: serializer.fromJson<String>(json['smsHash']),
+      isParsed: serializer.fromJson<bool>(json['isParsed']),
+      parseError: serializer.fromJson<String?>(json['parseError']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'sender': serializer.toJson<String>(sender),
+      'address': serializer.toJson<String>(address),
+      'body': serializer.toJson<String>(body),
+      'receivedAt': serializer.toJson<DateTime>(receivedAt),
+      'importedAt': serializer.toJson<DateTime>(importedAt),
+      'smsHash': serializer.toJson<String>(smsHash),
+      'isParsed': serializer.toJson<bool>(isParsed),
+      'parseError': serializer.toJson<String?>(parseError),
+    };
+  }
+
+  RawSmsMessage copyWith({
+    String? id,
+    String? sender,
+    String? address,
+    String? body,
+    DateTime? receivedAt,
+    DateTime? importedAt,
+    String? smsHash,
+    bool? isParsed,
+    Value<String?> parseError = const Value.absent(),
+  }) => RawSmsMessage(
+    id: id ?? this.id,
+    sender: sender ?? this.sender,
+    address: address ?? this.address,
+    body: body ?? this.body,
+    receivedAt: receivedAt ?? this.receivedAt,
+    importedAt: importedAt ?? this.importedAt,
+    smsHash: smsHash ?? this.smsHash,
+    isParsed: isParsed ?? this.isParsed,
+    parseError: parseError.present ? parseError.value : this.parseError,
+  );
+  RawSmsMessage copyWithCompanion(RawSmsMessagesCompanion data) {
+    return RawSmsMessage(
+      id: data.id.present ? data.id.value : this.id,
+      sender: data.sender.present ? data.sender.value : this.sender,
+      address: data.address.present ? data.address.value : this.address,
+      body: data.body.present ? data.body.value : this.body,
+      receivedAt: data.receivedAt.present
+          ? data.receivedAt.value
+          : this.receivedAt,
+      importedAt: data.importedAt.present
+          ? data.importedAt.value
+          : this.importedAt,
+      smsHash: data.smsHash.present ? data.smsHash.value : this.smsHash,
+      isParsed: data.isParsed.present ? data.isParsed.value : this.isParsed,
+      parseError: data.parseError.present
+          ? data.parseError.value
+          : this.parseError,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RawSmsMessage(')
+          ..write('id: $id, ')
+          ..write('sender: $sender, ')
+          ..write('address: $address, ')
+          ..write('body: $body, ')
+          ..write('receivedAt: $receivedAt, ')
+          ..write('importedAt: $importedAt, ')
+          ..write('smsHash: $smsHash, ')
+          ..write('isParsed: $isParsed, ')
+          ..write('parseError: $parseError')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    sender,
+    address,
+    body,
+    receivedAt,
+    importedAt,
+    smsHash,
+    isParsed,
+    parseError,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RawSmsMessage &&
+          other.id == this.id &&
+          other.sender == this.sender &&
+          other.address == this.address &&
+          other.body == this.body &&
+          other.receivedAt == this.receivedAt &&
+          other.importedAt == this.importedAt &&
+          other.smsHash == this.smsHash &&
+          other.isParsed == this.isParsed &&
+          other.parseError == this.parseError);
+}
+
+class RawSmsMessagesCompanion extends UpdateCompanion<RawSmsMessage> {
+  final Value<String> id;
+  final Value<String> sender;
+  final Value<String> address;
+  final Value<String> body;
+  final Value<DateTime> receivedAt;
+  final Value<DateTime> importedAt;
+  final Value<String> smsHash;
+  final Value<bool> isParsed;
+  final Value<String?> parseError;
+  final Value<int> rowid;
+  const RawSmsMessagesCompanion({
+    this.id = const Value.absent(),
+    this.sender = const Value.absent(),
+    this.address = const Value.absent(),
+    this.body = const Value.absent(),
+    this.receivedAt = const Value.absent(),
+    this.importedAt = const Value.absent(),
+    this.smsHash = const Value.absent(),
+    this.isParsed = const Value.absent(),
+    this.parseError = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  RawSmsMessagesCompanion.insert({
+    required String id,
+    required String sender,
+    required String address,
+    required String body,
+    required DateTime receivedAt,
+    required DateTime importedAt,
+    required String smsHash,
+    this.isParsed = const Value.absent(),
+    this.parseError = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       sender = Value(sender),
+       address = Value(address),
+       body = Value(body),
+       receivedAt = Value(receivedAt),
+       importedAt = Value(importedAt),
+       smsHash = Value(smsHash);
+  static Insertable<RawSmsMessage> custom({
+    Expression<String>? id,
+    Expression<String>? sender,
+    Expression<String>? address,
+    Expression<String>? body,
+    Expression<DateTime>? receivedAt,
+    Expression<DateTime>? importedAt,
+    Expression<String>? smsHash,
+    Expression<bool>? isParsed,
+    Expression<String>? parseError,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (sender != null) 'sender': sender,
+      if (address != null) 'address': address,
+      if (body != null) 'body': body,
+      if (receivedAt != null) 'received_at': receivedAt,
+      if (importedAt != null) 'imported_at': importedAt,
+      if (smsHash != null) 'sms_hash': smsHash,
+      if (isParsed != null) 'is_parsed': isParsed,
+      if (parseError != null) 'parse_error': parseError,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  RawSmsMessagesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? sender,
+    Value<String>? address,
+    Value<String>? body,
+    Value<DateTime>? receivedAt,
+    Value<DateTime>? importedAt,
+    Value<String>? smsHash,
+    Value<bool>? isParsed,
+    Value<String?>? parseError,
+    Value<int>? rowid,
+  }) {
+    return RawSmsMessagesCompanion(
+      id: id ?? this.id,
+      sender: sender ?? this.sender,
+      address: address ?? this.address,
+      body: body ?? this.body,
+      receivedAt: receivedAt ?? this.receivedAt,
+      importedAt: importedAt ?? this.importedAt,
+      smsHash: smsHash ?? this.smsHash,
+      isParsed: isParsed ?? this.isParsed,
+      parseError: parseError ?? this.parseError,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (sender.present) {
+      map['sender'] = Variable<String>(sender.value);
+    }
+    if (address.present) {
+      map['address'] = Variable<String>(address.value);
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    if (receivedAt.present) {
+      map['received_at'] = Variable<DateTime>(receivedAt.value);
+    }
+    if (importedAt.present) {
+      map['imported_at'] = Variable<DateTime>(importedAt.value);
+    }
+    if (smsHash.present) {
+      map['sms_hash'] = Variable<String>(smsHash.value);
+    }
+    if (isParsed.present) {
+      map['is_parsed'] = Variable<bool>(isParsed.value);
+    }
+    if (parseError.present) {
+      map['parse_error'] = Variable<String>(parseError.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RawSmsMessagesCompanion(')
+          ..write('id: $id, ')
+          ..write('sender: $sender, ')
+          ..write('address: $address, ')
+          ..write('body: $body, ')
+          ..write('receivedAt: $receivedAt, ')
+          ..write('importedAt: $importedAt, ')
+          ..write('smsHash: $smsHash, ')
+          ..write('isParsed: $isParsed, ')
+          ..write('parseError: $parseError, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2743,6 +3311,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ProviderTransactionsTable providerTransactions =
       $ProviderTransactionsTable(this);
   late final $LedgerEventsTable ledgerEvents = $LedgerEventsTable(this);
+  late final $RawSmsMessagesTable rawSmsMessages = $RawSmsMessagesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2754,6 +3323,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     dailySessions,
     providerTransactions,
     ledgerEvents,
+    rawSmsMessages,
   ];
 }
 
@@ -4189,6 +4759,290 @@ typedef $$LedgerEventsTableProcessedTableManager =
       LedgerEvent,
       PrefetchHooks Function()
     >;
+typedef $$RawSmsMessagesTableCreateCompanionBuilder =
+    RawSmsMessagesCompanion Function({
+      required String id,
+      required String sender,
+      required String address,
+      required String body,
+      required DateTime receivedAt,
+      required DateTime importedAt,
+      required String smsHash,
+      Value<bool> isParsed,
+      Value<String?> parseError,
+      Value<int> rowid,
+    });
+typedef $$RawSmsMessagesTableUpdateCompanionBuilder =
+    RawSmsMessagesCompanion Function({
+      Value<String> id,
+      Value<String> sender,
+      Value<String> address,
+      Value<String> body,
+      Value<DateTime> receivedAt,
+      Value<DateTime> importedAt,
+      Value<String> smsHash,
+      Value<bool> isParsed,
+      Value<String?> parseError,
+      Value<int> rowid,
+    });
+
+class $$RawSmsMessagesTableFilterComposer
+    extends Composer<_$AppDatabase, $RawSmsMessagesTable> {
+  $$RawSmsMessagesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sender => $composableBuilder(
+    column: $table.sender,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get address => $composableBuilder(
+    column: $table.address,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get receivedAt => $composableBuilder(
+    column: $table.receivedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get importedAt => $composableBuilder(
+    column: $table.importedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get smsHash => $composableBuilder(
+    column: $table.smsHash,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isParsed => $composableBuilder(
+    column: $table.isParsed,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get parseError => $composableBuilder(
+    column: $table.parseError,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$RawSmsMessagesTableOrderingComposer
+    extends Composer<_$AppDatabase, $RawSmsMessagesTable> {
+  $$RawSmsMessagesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sender => $composableBuilder(
+    column: $table.sender,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get address => $composableBuilder(
+    column: $table.address,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get receivedAt => $composableBuilder(
+    column: $table.receivedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get importedAt => $composableBuilder(
+    column: $table.importedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get smsHash => $composableBuilder(
+    column: $table.smsHash,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isParsed => $composableBuilder(
+    column: $table.isParsed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get parseError => $composableBuilder(
+    column: $table.parseError,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$RawSmsMessagesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $RawSmsMessagesTable> {
+  $$RawSmsMessagesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get sender =>
+      $composableBuilder(column: $table.sender, builder: (column) => column);
+
+  GeneratedColumn<String> get address =>
+      $composableBuilder(column: $table.address, builder: (column) => column);
+
+  GeneratedColumn<String> get body =>
+      $composableBuilder(column: $table.body, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get receivedAt => $composableBuilder(
+    column: $table.receivedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get importedAt => $composableBuilder(
+    column: $table.importedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get smsHash =>
+      $composableBuilder(column: $table.smsHash, builder: (column) => column);
+
+  GeneratedColumn<bool> get isParsed =>
+      $composableBuilder(column: $table.isParsed, builder: (column) => column);
+
+  GeneratedColumn<String> get parseError => $composableBuilder(
+    column: $table.parseError,
+    builder: (column) => column,
+  );
+}
+
+class $$RawSmsMessagesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $RawSmsMessagesTable,
+          RawSmsMessage,
+          $$RawSmsMessagesTableFilterComposer,
+          $$RawSmsMessagesTableOrderingComposer,
+          $$RawSmsMessagesTableAnnotationComposer,
+          $$RawSmsMessagesTableCreateCompanionBuilder,
+          $$RawSmsMessagesTableUpdateCompanionBuilder,
+          (
+            RawSmsMessage,
+            BaseReferences<_$AppDatabase, $RawSmsMessagesTable, RawSmsMessage>,
+          ),
+          RawSmsMessage,
+          PrefetchHooks Function()
+        > {
+  $$RawSmsMessagesTableTableManager(
+    _$AppDatabase db,
+    $RawSmsMessagesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$RawSmsMessagesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$RawSmsMessagesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$RawSmsMessagesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> sender = const Value.absent(),
+                Value<String> address = const Value.absent(),
+                Value<String> body = const Value.absent(),
+                Value<DateTime> receivedAt = const Value.absent(),
+                Value<DateTime> importedAt = const Value.absent(),
+                Value<String> smsHash = const Value.absent(),
+                Value<bool> isParsed = const Value.absent(),
+                Value<String?> parseError = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RawSmsMessagesCompanion(
+                id: id,
+                sender: sender,
+                address: address,
+                body: body,
+                receivedAt: receivedAt,
+                importedAt: importedAt,
+                smsHash: smsHash,
+                isParsed: isParsed,
+                parseError: parseError,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String sender,
+                required String address,
+                required String body,
+                required DateTime receivedAt,
+                required DateTime importedAt,
+                required String smsHash,
+                Value<bool> isParsed = const Value.absent(),
+                Value<String?> parseError = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RawSmsMessagesCompanion.insert(
+                id: id,
+                sender: sender,
+                address: address,
+                body: body,
+                receivedAt: receivedAt,
+                importedAt: importedAt,
+                smsHash: smsHash,
+                isParsed: isParsed,
+                parseError: parseError,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$RawSmsMessagesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $RawSmsMessagesTable,
+      RawSmsMessage,
+      $$RawSmsMessagesTableFilterComposer,
+      $$RawSmsMessagesTableOrderingComposer,
+      $$RawSmsMessagesTableAnnotationComposer,
+      $$RawSmsMessagesTableCreateCompanionBuilder,
+      $$RawSmsMessagesTableUpdateCompanionBuilder,
+      (
+        RawSmsMessage,
+        BaseReferences<_$AppDatabase, $RawSmsMessagesTable, RawSmsMessage>,
+      ),
+      RawSmsMessage,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4205,4 +5059,6 @@ class $AppDatabaseManager {
       $$ProviderTransactionsTableTableManager(_db, _db.providerTransactions);
   $$LedgerEventsTableTableManager get ledgerEvents =>
       $$LedgerEventsTableTableManager(_db, _db.ledgerEvents);
+  $$RawSmsMessagesTableTableManager get rawSmsMessages =>
+      $$RawSmsMessagesTableTableManager(_db, _db.rawSmsMessages);
 }

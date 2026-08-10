@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/setup/presentation/screens/setup_wizard_screen.dart';
-import '../../features/sms/presentation/screens/sms_import_screen.dart';
+import '../../features/sms/presentation/screens/import_sms_screen.dart';
 import '../../features/sms/presentation/screens/sms_permission_screen.dart';
 import '../../features/welcome/presentation/pages/welcome_page.dart';
 import '../../features/settings/presentation/providers/app_config_repository_provider.dart';
@@ -43,7 +43,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/sms/import',
-        builder: (context, state) => const SmsImportScreen(),
+        builder: (context, state) => const ImportSmsScreen(),
       ),
       GoRoute(
         path: '/sms/permission',
