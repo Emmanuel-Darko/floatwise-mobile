@@ -44,7 +44,9 @@ class _TillStepScreenState extends ConsumerState<TillStepScreen> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     final network = _network;
     if (network == null) return;
-    ref.read(setupControllerProvider.notifier).updateTill(
+    ref
+        .read(setupControllerProvider.notifier)
+        .updateTill(
           TillEntity(
             id: SetupUtils.generateLocalId(),
             branchId: '',
@@ -87,8 +89,9 @@ class _TillStepScreenState extends ConsumerState<TillStepScreen> {
                     Wrap(
                       spacing: 8,
                       children: [
-                        for (final network in MobileNetwork.values
-                            .where((n) => n != MobileNetwork.unknown))
+                        for (final network in MobileNetwork.values.where(
+                          (n) => n != MobileNetwork.unknown,
+                        ))
                           ChoiceChip(
                             label: Text(network.shortName),
                             selected: _network == network,
@@ -112,10 +115,7 @@ class _TillStepScreenState extends ConsumerState<TillStepScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            FilledButton(
-              onPressed: _submit,
-              child: const Text('Continue'),
-            ),
+            FilledButton(onPressed: _submit, child: const Text('Continue')),
           ],
         ),
       ),

@@ -35,7 +35,9 @@ class _BranchStepScreenState extends ConsumerState<BranchStepScreen> {
 
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    ref.read(setupControllerProvider.notifier).updateBranch(
+    ref
+        .read(setupControllerProvider.notifier)
+        .updateBranch(
           BranchEntity(
             id: SetupUtils.generateLocalId(),
             businessId: '',
@@ -67,10 +69,7 @@ class _BranchStepScreenState extends ConsumerState<BranchStepScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            FilledButton(
-              onPressed: _submit,
-              child: const Text('Continue'),
-            ),
+            FilledButton(onPressed: _submit, child: const Text('Continue')),
           ],
         ),
       ),

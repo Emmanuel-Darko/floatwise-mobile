@@ -6,8 +6,7 @@ import '../tables/branches.dart';
 part 'branch_dao.g.dart';
 
 @DriftAccessor(tables: [Branches])
-class BranchDao extends DatabaseAccessor<AppDatabase>
-    with _$BranchDaoMixin {
+class BranchDao extends DatabaseAccessor<AppDatabase> with _$BranchDaoMixin {
   BranchDao(super.db);
 
   Future<List<Branch>> getAllBranches() {
@@ -15,24 +14,20 @@ class BranchDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<List<Branch>> getBusinessBranches(String businessId) {
-    return (select(branches)
-          ..where((tbl) => tbl.businessId.equals(businessId)))
-        .get();
+    return (select(
+      branches,
+    )..where((tbl) => tbl.businessId.equals(businessId))).get();
   }
 
-  Future<void> insertBranch(
-      BranchesCompanion companion) async {
+  Future<void> insertBranch(BranchesCompanion companion) async {
     await into(branches).insert(companion);
   }
 
-  Future<void> updateBranch(
-      Branch branch) async {
+  Future<void> updateBranch(Branch branch) async {
     await update(branches).replace(branch);
   }
 
   Future<void> deleteBranch(String id) async {
-    await (delete(branches)
-          ..where((tbl) => tbl.id.equals(id)))
-        .go();
+    await (delete(branches)..where((tbl) => tbl.id.equals(id))).go();
   }
 }

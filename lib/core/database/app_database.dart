@@ -14,6 +14,8 @@ import 'dao/branch_dao.dart';
 import 'dao/till_dao.dart';
 import 'dao/daily_session_dao.dart';
 import 'dao/raw_sms_message_dao.dart';
+import 'dao/provider_transaction_dao.dart';
+import 'dao/ledger_event_dao.dart';
 
 part 'app_database.g.dart';
 
@@ -36,9 +38,11 @@ class AppDatabase extends _$AppDatabase {
   late final tillDao = TillDao(this);
   late final dailySessionDao = DailySessionDao(this);
   late final rawSmsMessageDao = RawSmsMessageDao(this);
+  late final providerTransactionDao = ProviderTransactionDao(this);
+  late final ledgerEventDao = LedgerEventDao(this);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -46,6 +50,12 @@ class AppDatabase extends _$AppDatabase {
     onUpgrade: (migrator, from, to) async {
       if (from < 2) {
         await migrator.createTable(rawSmsMessages);
+      }
+      if (from < 3) {
+        await migrator.deleteTable('provider_transactions');
+        await migrator.createTable(providerTransactions);
+        await migrator.deleteTable('ledger_events');
+        await migrator.createTable(ledgerEvents);
       }
     },
   );

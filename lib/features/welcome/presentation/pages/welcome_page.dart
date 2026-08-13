@@ -39,10 +39,7 @@ class WelcomePage extends ConsumerWidget {
 
               const SizedBox(height: AppSpacing.xl),
 
-              Text(
-                'FloatWise',
-                style: theme.textTheme.headlineMedium,
-              ),
+              Text('FloatWise', style: theme.textTheme.headlineMedium),
 
               const SizedBox(height: AppSpacing.sm),
 
@@ -84,7 +81,9 @@ class WelcomePage extends ConsumerWidget {
                     );
 
                     final businesses = await repository.getAll();
-                    debugPrint('>>> Persistence test: ${businesses.first.name}');
+                    debugPrint(
+                      '>>> Persistence test: ${businesses.first.name}',
+                    );
                   },
                   child: const Text('🧪 Test Persistence'),
                 ),
@@ -99,7 +98,9 @@ class WelcomePage extends ConsumerWidget {
                     final businessRepo = ref.read(businessRepositoryProvider);
                     final branchRepo = ref.read(branchRepositoryProvider);
                     final tillRepo = ref.read(tillRepositoryProvider);
-                    final sessionRepo = ref.read(dailySessionRepositoryProvider);
+                    final sessionRepo = ref.read(
+                      dailySessionRepositoryProvider,
+                    );
 
                     final suffix = DateTime.now().millisecondsSinceEpoch;
                     final businessId = 'biz-$suffix';
@@ -166,8 +167,8 @@ class WelcomePage extends ConsumerWidget {
                       );
                     } catch (e) {
                       if (e.toString().contains(
-                            'An active session already exists',
-                          )) {
+                        'An active session already exists',
+                      )) {
                         duplicateRejected = true;
                       }
                     }
@@ -206,9 +207,7 @@ class WelcomePage extends ConsumerWidget {
                       reopened = false;
                       debugPrint('>>> Reopen failed: $e');
                     }
-                    debugPrint(
-                      '>>> Step 7: Reopen succeeded: $reopened',
-                    );
+                    debugPrint('>>> Step 7: Reopen succeeded: $reopened');
                     debugPrint(
                       '>>> Session rule test complete: '
                       'duplicateRejected=$duplicateRejected, '
@@ -239,9 +238,7 @@ class WelcomePage extends ConsumerWidget {
                         currentTillId: null,
                       ),
                     );
-                    debugPrint(
-                      '>>> hasCompletedSetup set to: $next',
-                    );
+                    debugPrint('>>> hasCompletedSetup set to: $next');
                   },
                   child: const Text('🧪 Toggle Setup'),
                 ),
@@ -249,10 +246,7 @@ class WelcomePage extends ConsumerWidget {
 
               const Spacer(),
 
-              Text(
-                'Version 1.0.0',
-                style: theme.textTheme.bodySmall,
-              ),
+              Text('Version 1.0.0', style: theme.textTheme.bodySmall),
             ],
           ),
         ),

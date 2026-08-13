@@ -42,7 +42,9 @@ class _OpeningBalanceStepScreenState
 
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    ref.read(setupControllerProvider.notifier).updateOpeningBalances(
+    ref
+        .read(setupControllerProvider.notifier)
+        .updateOpeningBalances(
           cash: double.parse(_cashController.text.trim()),
           floatBalance: double.parse(_floatController.text.trim()),
         );
@@ -89,10 +91,7 @@ class _OpeningBalanceStepScreenState
               ),
             ),
             const SizedBox(height: 16),
-            FilledButton(
-              onPressed: _submit,
-              child: const Text('Continue'),
-            ),
+            FilledButton(onPressed: _submit, child: const Text('Continue')),
           ],
         ),
       ),

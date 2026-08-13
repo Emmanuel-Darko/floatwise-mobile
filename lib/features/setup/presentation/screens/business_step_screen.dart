@@ -35,7 +35,9 @@ class _BusinessStepScreenState extends ConsumerState<BusinessStepScreen> {
 
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    ref.read(setupControllerProvider.notifier).updateBusiness(
+    ref
+        .read(setupControllerProvider.notifier)
+        .updateBusiness(
           BusinessEntity(
             id: SetupUtils.generateLocalId(),
             name: _nameController.text.trim(),
@@ -67,10 +69,7 @@ class _BusinessStepScreenState extends ConsumerState<BusinessStepScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            FilledButton(
-              onPressed: _submit,
-              child: const Text('Continue'),
-            ),
+            FilledButton(onPressed: _submit, child: const Text('Continue')),
           ],
         ),
       ),

@@ -88,11 +88,16 @@ class _SummaryRow extends StatelessWidget {
           ),
           Text(
             Formatters.currency(amount),
-            style: (emphasized ? theme.textTheme.titleSmall : theme.textTheme.bodyMedium)
-                ?.copyWith(
-              color: color,
-              fontWeight: emphasized ? FontWeight.w700 : FontWeight.w600,
-            ),
+            style:
+                (emphasized
+                        ? theme.textTheme.titleSmall
+                        : theme.textTheme.bodyMedium)
+                    ?.copyWith(
+                      color: color,
+                      fontWeight: emphasized
+                          ? FontWeight.w700
+                          : FontWeight.w600,
+                    ),
           ),
         ],
       ),

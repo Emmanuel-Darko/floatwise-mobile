@@ -30,9 +30,7 @@ class SetupServiceImpl implements SetupService {
   final AppConfigRepository appConfigRepository;
 
   @override
-  Future<void> completeSetup({
-    required SetupState state,
-  }) async {
+  Future<void> completeSetup({required SetupState state}) async {
     final business = state.business;
     final branch = state.branch;
     final till = state.till;

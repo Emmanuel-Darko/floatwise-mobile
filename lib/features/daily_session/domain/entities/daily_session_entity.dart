@@ -1,7 +1,4 @@
-enum SessionStatus {
-  open,
-  closed,
-}
+enum SessionStatus { open, closed }
 
 class DailySessionEntity {
   const DailySessionEntity({

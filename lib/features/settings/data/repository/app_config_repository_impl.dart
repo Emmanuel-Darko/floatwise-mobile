@@ -13,8 +13,7 @@ class AppConfigRepositoryImpl implements AppConfigRepository {
   @override
   Future<AppConfigEntity> getConfig() async {
     return AppConfigEntity(
-      hasCompletedSetup:
-          _prefs.getBool(StorageKeys.hasCompletedSetup) ?? false,
+      hasCompletedSetup: _prefs.getBool(StorageKeys.hasCompletedSetup) ?? false,
       currentBusinessId: _prefs.getString(StorageKeys.currentBusinessId),
       currentBranchId: _prefs.getString(StorageKeys.currentBranchId),
       currentTillId: _prefs.getString(StorageKeys.currentTillId),
@@ -33,28 +32,19 @@ class AppConfigRepositoryImpl implements AppConfigRepository {
     final currentTillId = config.currentTillId;
 
     if (currentBusinessId != null) {
-      await _prefs.setString(
-        StorageKeys.currentBusinessId,
-        currentBusinessId,
-      );
+      await _prefs.setString(StorageKeys.currentBusinessId, currentBusinessId);
     } else {
       await _prefs.remove(StorageKeys.currentBusinessId);
     }
 
     if (currentBranchId != null) {
-      await _prefs.setString(
-        StorageKeys.currentBranchId,
-        currentBranchId,
-      );
+      await _prefs.setString(StorageKeys.currentBranchId, currentBranchId);
     } else {
       await _prefs.remove(StorageKeys.currentBranchId);
     }
 
     if (currentTillId != null) {
-      await _prefs.setString(
-        StorageKeys.currentTillId,
-        currentTillId,
-      );
+      await _prefs.setString(StorageKeys.currentTillId, currentTillId);
     } else {
       await _prefs.remove(StorageKeys.currentTillId);
     }

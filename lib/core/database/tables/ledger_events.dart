@@ -3,9 +3,9 @@ import 'package:drift/drift.dart';
 class LedgerEvents extends Table {
   TextColumn get id => text()();
 
-  TextColumn get sessionId => text()();
+  TextColumn get sessionId => text().nullable()();
 
-  TextColumn get tillId => text()();
+  TextColumn get tillId => text().nullable()();
 
   TextColumn get type => text()();
 
@@ -16,6 +16,10 @@ class LedgerEvents extends Table {
   RealColumn get commissionDelta => real()();
 
   DateTimeColumn get createdAt => dateTime()();
+
+  TextColumn get providerTransactionId => text().nullable()();
+
+  TextColumn get note => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};

@@ -12,8 +12,9 @@ import '../../application/setup_service_impl.dart';
 final setupServiceProvider = FutureProvider<SetupService>((ref) async {
   final database = ref.watch(databaseProvider);
 
-  final appConfigRepository =
-      await ref.watch(appConfigRepositoryProvider.future);
+  final appConfigRepository = await ref.watch(
+    appConfigRepositoryProvider.future,
+  );
 
   return SetupServiceImpl(
     database: database,

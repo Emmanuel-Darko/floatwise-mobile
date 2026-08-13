@@ -21,7 +21,8 @@ class MtnSmsParser implements SmsParser {
       return SmsParseUtils.build(network, TransactionType.cashIn, message);
     }
 
-    if (normalized.contains('sent')) {
+    if (normalized.contains('sent') ||
+        normalized.contains('payment made for')) {
       return SmsParseUtils.build(network, TransactionType.cashOut, message);
     }
 

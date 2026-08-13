@@ -1,5 +1,1 @@
-enum TillStatus {
-  active,
-  suspended,
-  archived,
-}
+enum TillStatus { active, suspended, archived }

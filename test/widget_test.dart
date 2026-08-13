@@ -12,11 +12,7 @@ void main() {
   });
 
   testWidgets('FloatWise smoke test', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const ProviderScope(
-        child: FloatWiseApp(),
-      ),
-    );
+    await tester.pumpWidget(const ProviderScope(child: FloatWiseApp()));
 
     await tester.pumpAndSettle();
 

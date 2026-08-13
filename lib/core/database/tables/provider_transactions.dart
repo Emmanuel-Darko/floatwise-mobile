@@ -3,9 +3,9 @@ import 'package:drift/drift.dart';
 class ProviderTransactions extends Table {
   TextColumn get id => text()();
 
-  TextColumn get tillId => text()();
+  TextColumn get tillId => text().nullable()();
 
-  TextColumn get providerReference => text()();
+  TextColumn get sessionId => text().nullable()();
 
   TextColumn get network => text()();
 
@@ -13,11 +13,19 @@ class ProviderTransactions extends Table {
 
   RealColumn get amount => real()();
 
-  TextColumn get smsBody => text()();
+  DateTimeColumn get timestamp => dateTime()();
 
   TextColumn get status => text()();
 
-  DateTimeColumn get receivedAt => dateTime()();
+  TextColumn get source => text()();
+
+  TextColumn get phoneNumber => text().nullable()();
+
+  TextColumn get reference => text().nullable()();
+
+  TextColumn get rawSmsId => text().nullable()();
+
+  RealColumn get balanceAfter => real().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};

@@ -15,9 +15,9 @@ class BusinessDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<BusinessesData?> getBusiness(String id) {
-    return (select(businesses)
-          ..where((tbl) => tbl.id.equals(id)))
-        .getSingleOrNull();
+    return (select(
+      businesses,
+    )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
   }
 
   Future<void> insertBusiness(BusinessesCompanion business) async {
@@ -29,8 +29,6 @@ class BusinessDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<void> deleteBusiness(String id) async {
-    await (delete(businesses)
-          ..where((tbl) => tbl.id.equals(id)))
-        .go();
+    await (delete(businesses)..where((tbl) => tbl.id.equals(id))).go();
   }
 }

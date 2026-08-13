@@ -9,9 +9,7 @@ LazyDatabase openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
 
-    final file = File(
-      p.join(dbFolder.path, 'floatwise.db'),
-    );
+    final file = File(p.join(dbFolder.path, 'floatwise.db'));
 
     return NativeDatabase(file);
   });
