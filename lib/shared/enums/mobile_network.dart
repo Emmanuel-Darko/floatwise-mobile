@@ -2,6 +2,7 @@ enum MobileNetwork {
   mtn,
   telecel,
   airteltigo,
+  unknown,
 }
 
 extension MobileNetworkExtension on MobileNetwork {
@@ -13,6 +14,8 @@ extension MobileNetworkExtension on MobileNetwork {
         return 'Telecel Cash';
       case MobileNetwork.airteltigo:
         return 'AT Money';
+      case MobileNetwork.unknown:
+        return 'Unknown';
     }
   }
 
@@ -24,6 +27,8 @@ extension MobileNetworkExtension on MobileNetwork {
         return 'Telecel';
       case MobileNetwork.airteltigo:
         return 'AT';
+      case MobileNetwork.unknown:
+        return '—';
     }
   }
 }
