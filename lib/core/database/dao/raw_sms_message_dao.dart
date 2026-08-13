@@ -18,31 +18,23 @@ class RawSmsMessageDao extends DatabaseAccessor<AppDatabase>
     return (await query.getSingleOrNull()) != null;
   }
 
-  Future<void> insertMessage(
-    RawSmsMessagesCompanion message,
-  ) {
-    return into(rawSmsMessages).insert(
-      message,
-      mode: InsertMode.insertOrIgnore,
-    );
+  Future<void> insertMessage(RawSmsMessagesCompanion message) {
+    return into(
+      rawSmsMessages,
+    ).insert(message, mode: InsertMode.insertOrIgnore);
   }
 
   Future<List<RawSmsMessage>> getUnparsedMessages() {
     return (select(rawSmsMessages)
           ..where((table) => table.isParsed.equals(false))
-          ..orderBy([
-            (table) =>
-                OrderingTerm.asc(table.receivedAt),
-          ]))
+          ..orderBy([(table) => OrderingTerm.asc(table.receivedAt)]))
         .get();
   }
 
-  Future<void> markParsed({
-    required String id,
-  }) {
-    return (update(rawSmsMessages)
-          ..where((table) => table.id.equals(id)))
-        .write(
+  Future<void> markParsed({required String id}) {
+    return (update(
+      rawSmsMessages,
+    )..where((table) => table.id.equals(id))).write(
       const RawSmsMessagesCompanion(
         isParsed: Value(true),
         parseError: Value(null),
@@ -50,16 +42,8 @@ class RawSmsMessageDao extends DatabaseAccessor<AppDatabase>
     );
   }
 
-  Future<void> markParseError({
-    required String id,
-    required String error,
-  }) {
-    return (update(rawSmsMessages)
-          ..where((table) => table.id.equals(id)))
-        .write(
-      RawSmsMessagesCompanion(
-        parseError: Value(error),
-      ),
-    );
+  Future<void> markParseError({required String id, required String error}) {
+    return (update(rawSmsMessages)..where((table) => table.id.equals(id)))
+        .write(RawSmsMessagesCompanion(parseError: Value(error)));
   }
 }

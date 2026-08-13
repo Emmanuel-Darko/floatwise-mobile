@@ -1,5 +1,1 @@
-enum TransactionSource {
-  sms,
-  ussd,
-  manual,
-}
+enum TransactionSource { sms, ussd, manual }

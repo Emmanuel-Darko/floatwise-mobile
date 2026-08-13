@@ -107,6 +107,7 @@ void main() {
     expect(result.processed, 5);
     expect(result.parsed, 3);
     expect(result.failed, 2);
+    expect(result.transactions.length, 3);
 
     final remaining = await database.rawSmsMessageDao.getUnparsedMessages();
 
@@ -135,5 +136,6 @@ void main() {
     expect(second.processed, 0);
     expect(second.parsed, 0);
     expect(second.failed, 0);
+    expect(second.transactions, isEmpty);
   });
 }

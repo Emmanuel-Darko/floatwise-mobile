@@ -59,7 +59,8 @@ class _ReviewStepScreenState extends ConsumerState<ReviewStepScreen> {
     final cash = state.openingCash;
     final float = state.openingFloat;
 
-    final ready = business != null &&
+    final ready =
+        business != null &&
         branch != null &&
         till != null &&
         cash != null &&
@@ -72,14 +73,8 @@ class _ReviewStepScreenState extends ConsumerState<ReviewStepScreen> {
           Expanded(
             child: ListView(
               children: [
-                _Section(
-                  title: 'Business',
-                  value: business?.name ?? '—',
-                ),
-                _Section(
-                  title: 'Branch',
-                  value: branch?.name ?? '—',
-                ),
+                _Section(title: 'Business', value: business?.name ?? '—'),
+                _Section(title: 'Branch', value: branch?.name ?? '—'),
                 _Section(
                   title: 'Till',
                   value: till != null

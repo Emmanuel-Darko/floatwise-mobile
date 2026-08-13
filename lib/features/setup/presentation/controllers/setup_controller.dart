@@ -25,9 +25,6 @@ class SetupController extends Notifier<SetupState> {
     required double cash,
     required double floatBalance,
   }) {
-    state = state.copyWith(
-      openingCash: cash,
-      openingFloat: floatBalance,
-    );
+    state = state.copyWith(openingCash: cash, openingFloat: floatBalance);
   }
 }

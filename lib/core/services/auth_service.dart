@@ -14,9 +14,7 @@ class AuthService {
 
   Stream<AuthState> get authStateChanges => _client.auth.onAuthStateChange;
 
-  Future<AuthResponse> signInWithPhone({
-    required String phone,
-  }) async {
+  Future<AuthResponse> signInWithPhone({required String phone}) async {
     await _client.auth.signInWithOtp(phone: phone);
     // OTP is sent; the actual AuthResponse comes after verification
     return AuthResponse();

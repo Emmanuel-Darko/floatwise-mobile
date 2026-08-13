@@ -23,5 +23,7 @@ class RawSmsMessages extends Table {
   Set<Column> get primaryKey => {id};
 
   @override
-  List<Set<Column>> get uniqueKeys => [{smsHash}];
+  List<Set<Column>> get uniqueKeys => [
+    {smsHash},
+  ];
 }

@@ -17,7 +17,7 @@ class SmsParseUtils {
   );
 
   static final _referenceRegex = RegExp(
-    r'(?:transaction\s*(?:id|no|number|ref|reference)|ref(?:erence)?|reference\s*id)\s*:?\s*([a-z0-9]{6,})',
+    r'(?:transaction\s*(?:id|no|number|ref|reference)|ref(?:erence)?|reference\s*id|txn)\s*:?\s*([a-z0-9]{6,})',
     caseSensitive: false,
   );
 

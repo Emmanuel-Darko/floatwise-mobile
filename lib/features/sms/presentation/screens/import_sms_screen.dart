@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../features/transaction/domain/models/transaction_posting_result.dart';
+import '../../../../features/transaction/presentation/providers/transaction_posting_service_provider.dart';
 import '../../domain/models/sms_import_result.dart';
 import '../../domain/models/sms_parse_result.dart';
 import '../providers/sms_import_provider.dart';
@@ -35,6 +37,7 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
   String? _error;
   SmsImportResult? _result;
   SmsParseResult? _parseResult;
+  TransactionPostingResult? _postingResult;
   SmsImportRange _range = SmsImportRange.today;
   DateTime? _customDate;
 
@@ -105,11 +108,26 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
         parseResult = null;
       }
 
+      TransactionPostingResult? postingResult;
+      if (parseResult != null && parseResult.transactions.isNotEmpty) {
+        try {
+          final postingService = await ref.read(
+            transactionPostingServiceProvider.future,
+          );
+          postingResult = await postingService.postTransactions(
+            parseResult.transactions,
+          );
+        } catch (postingError) {
+          postingResult = null;
+        }
+      }
+
       if (!mounted) return;
       setState(() {
         _importing = false;
         _result = result;
         _parseResult = parseResult;
+        _postingResult = postingResult;
       });
     } catch (_) {
       if (!mounted) return;
@@ -121,6 +139,21 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
   }
 
   void _continue() => context.go('/dashboard');
+
+  String _summaryMessage(
+    SmsParseResult? parseResult,
+    TransactionPostingResult? postingResult,
+  ) {
+    if (postingResult != null) {
+      return postingResult.hasActiveSession
+          ? 'Verified transactions have been posted to the ledger.'
+          : 'Transactions are posted to the ledger once a session is active.';
+    }
+    if (parseResult != null) {
+      return 'Transactions are ready for verification.';
+    }
+    return 'Ready for parsing.';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +171,7 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
   Widget _body(BuildContext context) {
     final result = _result;
     if (result != null) {
-      return _summary(context, result, _parseResult);
+      return _summary(context, result, _parseResult, _postingResult);
     }
 
     if (_importing) {
@@ -286,6 +319,7 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
     BuildContext context,
     SmsImportResult result,
     SmsParseResult? parseResult,
+    TransactionPostingResult? postingResult,
   ) {
     final theme = Theme.of(context);
     final number = NumberFormat.decimalPattern();
@@ -329,11 +363,35 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
             value: number.format(parseResult.failed),
           ),
         ],
+        if (postingResult != null) ...[
+          const Divider(height: 32),
+          _StatRow(
+            label: 'posted to ledger',
+            value: number.format(postingResult.posted),
+            emphasized: true,
+          ),
+          _StatRow(
+            label: 'awaiting review',
+            value: number.format(postingResult.needsReview),
+          ),
+          _StatRow(
+            label: 'duplicates skipped',
+            value: number.format(postingResult.duplicates),
+          ),
+          if (!postingResult.hasActiveSession) ...[
+            const SizedBox(height: 8),
+            Text(
+              'No active session — posting is on hold until you start one.',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ],
         const SizedBox(height: 16),
         Text(
-          parseResult == null
-              ? 'Ready for parsing.'
-              : 'Transactions are ready for verification.',
+          _summaryMessage(parseResult, postingResult),
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: AppColors.textSecondary,

@@ -66,7 +66,7 @@ void main() {
         ),
         type: TransactionType.cashIn,
         amount: 150.00,
-        reference: 'XKW7QPLR2M',
+        reference: 'MTN7648291043',
         phoneNumber: '0241000000',
         balanceAfter: 850.75,
       );
@@ -81,7 +81,7 @@ void main() {
         ),
         type: TransactionType.cashOut,
         amount: 40.00,
-        reference: 'XKW7QPLR3N',
+        reference: 'MTN7648291052',
         phoneNumber: '0552000000',
         balanceAfter: 810.75,
       );
@@ -96,9 +96,23 @@ void main() {
         ),
         type: TransactionType.reversal,
         amount: 40.00,
-        reference: 'XKW7QPLR4P',
+        reference: 'MTN7648291061',
         phoneNumber: '0552000000',
         balanceAfter: 850.75,
+      );
+    });
+
+    test('parses a payment made via the Payment made for format', () {
+      expectParsed(
+        parser: parser,
+        message: rawMessage(
+          sender: 'MTN MoMo',
+          body: fixture('mtn/mtn_payment.txt'),
+        ),
+        type: TransactionType.cashOut,
+        amount: 50.00,
+        reference: '76712833868',
+        balanceAfter: 450.00,
       );
     });
 
@@ -143,9 +157,9 @@ void main() {
           body: fixture('telecel/telecel_deposit.txt'),
         ),
         type: TransactionType.cashIn,
-        amount: 20.00,
-        phoneNumber: '0243000000',
-        balanceAfter: 240.00,
+        amount: 150.00,
+        phoneNumber: '0241000000',
+        balanceAfter: 850.75,
       );
     });
 
@@ -157,9 +171,9 @@ void main() {
           body: fixture('telecel/telecel_withdrawal.txt'),
         ),
         type: TransactionType.cashOut,
-        amount: 20.00,
-        phoneNumber: '0204000000',
-        balanceAfter: 220.00,
+        amount: 40.00,
+        phoneNumber: '0552000000',
+        balanceAfter: 810.75,
       );
     });
 
@@ -210,7 +224,7 @@ void main() {
         ),
         type: TransactionType.cashIn,
         amount: 100.00,
-        reference: 'AT0012345678',
+        reference: '987654321',
         phoneNumber: '0265000000',
         balanceAfter: 900.00,
       );
@@ -225,6 +239,7 @@ void main() {
         ),
         type: TransactionType.cashOut,
         amount: 50.00,
+        reference: '987654322',
         phoneNumber: '0276000000',
         balanceAfter: 850.00,
       );
@@ -239,6 +254,7 @@ void main() {
         ),
         type: TransactionType.cashOut,
         amount: 80.00,
+        reference: '987654323',
         balanceAfter: 770.00,
       );
     });

@@ -3,8 +3,7 @@ import '../../../../core/database/app_database.dart';
 import '../../domain/entities/branch_entity.dart';
 import '../../domain/repository/branch_repository.dart';
 
-class BranchRepositoryImpl
-    implements BranchRepository {
+class BranchRepositoryImpl implements BranchRepository {
   BranchRepositoryImpl(this.database);
 
   final AppDatabase database;
@@ -27,10 +26,8 @@ class BranchRepositoryImpl
   }
 
   @override
-  Future<List<BranchEntity>> getBusinessBranches(
-      String businessId) async {
-    final rows = await database.branchDao
-        .getBusinessBranches(businessId);
+  Future<List<BranchEntity>> getBusinessBranches(String businessId) async {
+    final rows = await database.branchDao.getBusinessBranches(businessId);
 
     return rows
         .map(

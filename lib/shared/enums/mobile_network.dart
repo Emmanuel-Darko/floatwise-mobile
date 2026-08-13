@@ -1,9 +1,4 @@
-enum MobileNetwork {
-  mtn,
-  telecel,
-  airteltigo,
-  unknown,
-}
+enum MobileNetwork { mtn, telecel, airteltigo, unknown }
 
 extension MobileNetworkExtension on MobileNetwork {
   String get displayName {

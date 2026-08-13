@@ -9,6 +9,5 @@ abstract interface class TillRepository {
 
   Future<TillEntity?> getById(String id);
 
-  Future<List<TillEntity>> getBranchTills(
-      String branchId);
+  Future<List<TillEntity>> getBranchTills(String branchId);
 }

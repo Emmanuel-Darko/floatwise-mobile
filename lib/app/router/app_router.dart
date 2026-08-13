@@ -12,8 +12,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/',
     redirect: (context, state) async {
-      final config =
-          await ref.read(appConfigRepositoryProvider.future);
+      final config = await ref.read(appConfigRepositoryProvider.future);
 
       final hasCompletedSetup = await config.hasCompletedSetup();
 
@@ -29,10 +28,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const WelcomePage(),
-      ),
+      GoRoute(path: '/', builder: (context, state) => const WelcomePage()),
       GoRoute(
         path: '/dashboard',
         builder: (context, state) => const DashboardScreen(),

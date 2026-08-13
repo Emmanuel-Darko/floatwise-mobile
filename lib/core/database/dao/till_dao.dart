@@ -6,8 +6,7 @@ import '../tables/tills.dart';
 part 'till_dao.g.dart';
 
 @DriftAccessor(tables: [Tills])
-class TillDao extends DatabaseAccessor<AppDatabase>
-    with _$TillDaoMixin {
+class TillDao extends DatabaseAccessor<AppDatabase> with _$TillDaoMixin {
   TillDao(super.db);
 
   Future<List<Till>> getAllTills() {
@@ -15,15 +14,11 @@ class TillDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<List<Till>> getBranchTills(String branchId) {
-    return (select(tills)
-          ..where((tbl) => tbl.branchId.equals(branchId)))
-        .get();
+    return (select(tills)..where((tbl) => tbl.branchId.equals(branchId))).get();
   }
 
   Future<Till?> getTill(String id) {
-    return (select(tills)
-          ..where((tbl) => tbl.id.equals(id)))
-        .getSingleOrNull();
+    return (select(tills)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
   }
 
   Future<void> insertTill(TillsCompanion companion) async {
@@ -35,8 +30,6 @@ class TillDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<void> deleteTill(String id) async {
-    await (delete(tills)
-          ..where((tbl) => tbl.id.equals(id)))
-        .go();
+    await (delete(tills)..where((tbl) => tbl.id.equals(id))).go();
   }
 }

@@ -1676,22 +1676,21 @@ class $ProviderTransactionsTable extends ProviderTransactions
   late final GeneratedColumn<String> tillId = GeneratedColumn<String>(
     'till_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
-  static const VerificationMeta _providerReferenceMeta = const VerificationMeta(
-    'providerReference',
+  static const VerificationMeta _sessionIdMeta = const VerificationMeta(
+    'sessionId',
   );
   @override
-  late final GeneratedColumn<String> providerReference =
-      GeneratedColumn<String>(
-        'provider_reference',
-        aliasedName,
-        false,
-        type: DriftSqlType.string,
-        requiredDuringInsert: true,
-      );
+  late final GeneratedColumn<String> sessionId = GeneratedColumn<String>(
+    'session_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _networkMeta = const VerificationMeta(
     'network',
   );
@@ -1721,15 +1720,15 @@ class $ProviderTransactionsTable extends ProviderTransactions
     type: DriftSqlType.double,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _smsBodyMeta = const VerificationMeta(
-    'smsBody',
+  static const VerificationMeta _timestampMeta = const VerificationMeta(
+    'timestamp',
   );
   @override
-  late final GeneratedColumn<String> smsBody = GeneratedColumn<String>(
-    'sms_body',
+  late final GeneratedColumn<DateTime> timestamp = GeneratedColumn<DateTime>(
+    'timestamp',
     aliasedName,
     false,
-    type: DriftSqlType.string,
+    type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
   static const VerificationMeta _statusMeta = const VerificationMeta('status');
@@ -1741,28 +1740,74 @@ class $ProviderTransactionsTable extends ProviderTransactions
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _receivedAtMeta = const VerificationMeta(
-    'receivedAt',
-  );
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
   @override
-  late final GeneratedColumn<DateTime> receivedAt = GeneratedColumn<DateTime>(
-    'received_at',
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+    'source',
     aliasedName,
     false,
-    type: DriftSqlType.dateTime,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _phoneNumberMeta = const VerificationMeta(
+    'phoneNumber',
+  );
+  @override
+  late final GeneratedColumn<String> phoneNumber = GeneratedColumn<String>(
+    'phone_number',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _referenceMeta = const VerificationMeta(
+    'reference',
+  );
+  @override
+  late final GeneratedColumn<String> reference = GeneratedColumn<String>(
+    'reference',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rawSmsIdMeta = const VerificationMeta(
+    'rawSmsId',
+  );
+  @override
+  late final GeneratedColumn<String> rawSmsId = GeneratedColumn<String>(
+    'raw_sms_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _balanceAfterMeta = const VerificationMeta(
+    'balanceAfter',
+  );
+  @override
+  late final GeneratedColumn<double> balanceAfter = GeneratedColumn<double>(
+    'balance_after',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
   );
   @override
   List<GeneratedColumn> get $columns => [
     id,
     tillId,
-    providerReference,
+    sessionId,
     network,
     type,
     amount,
-    smsBody,
+    timestamp,
     status,
-    receivedAt,
+    source,
+    phoneNumber,
+    reference,
+    rawSmsId,
+    balanceAfter,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1786,19 +1831,12 @@ class $ProviderTransactionsTable extends ProviderTransactions
         _tillIdMeta,
         tillId.isAcceptableOrUnknown(data['till_id']!, _tillIdMeta),
       );
-    } else if (isInserting) {
-      context.missing(_tillIdMeta);
     }
-    if (data.containsKey('provider_reference')) {
+    if (data.containsKey('session_id')) {
       context.handle(
-        _providerReferenceMeta,
-        providerReference.isAcceptableOrUnknown(
-          data['provider_reference']!,
-          _providerReferenceMeta,
-        ),
+        _sessionIdMeta,
+        sessionId.isAcceptableOrUnknown(data['session_id']!, _sessionIdMeta),
       );
-    } else if (isInserting) {
-      context.missing(_providerReferenceMeta);
     }
     if (data.containsKey('network')) {
       context.handle(
@@ -1824,13 +1862,13 @@ class $ProviderTransactionsTable extends ProviderTransactions
     } else if (isInserting) {
       context.missing(_amountMeta);
     }
-    if (data.containsKey('sms_body')) {
+    if (data.containsKey('timestamp')) {
       context.handle(
-        _smsBodyMeta,
-        smsBody.isAcceptableOrUnknown(data['sms_body']!, _smsBodyMeta),
+        _timestampMeta,
+        timestamp.isAcceptableOrUnknown(data['timestamp']!, _timestampMeta),
       );
     } else if (isInserting) {
-      context.missing(_smsBodyMeta);
+      context.missing(_timestampMeta);
     }
     if (data.containsKey('status')) {
       context.handle(
@@ -1840,13 +1878,43 @@ class $ProviderTransactionsTable extends ProviderTransactions
     } else if (isInserting) {
       context.missing(_statusMeta);
     }
-    if (data.containsKey('received_at')) {
+    if (data.containsKey('source')) {
       context.handle(
-        _receivedAtMeta,
-        receivedAt.isAcceptableOrUnknown(data['received_at']!, _receivedAtMeta),
+        _sourceMeta,
+        source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
       );
     } else if (isInserting) {
-      context.missing(_receivedAtMeta);
+      context.missing(_sourceMeta);
+    }
+    if (data.containsKey('phone_number')) {
+      context.handle(
+        _phoneNumberMeta,
+        phoneNumber.isAcceptableOrUnknown(
+          data['phone_number']!,
+          _phoneNumberMeta,
+        ),
+      );
+    }
+    if (data.containsKey('reference')) {
+      context.handle(
+        _referenceMeta,
+        reference.isAcceptableOrUnknown(data['reference']!, _referenceMeta),
+      );
+    }
+    if (data.containsKey('raw_sms_id')) {
+      context.handle(
+        _rawSmsIdMeta,
+        rawSmsId.isAcceptableOrUnknown(data['raw_sms_id']!, _rawSmsIdMeta),
+      );
+    }
+    if (data.containsKey('balance_after')) {
+      context.handle(
+        _balanceAfterMeta,
+        balanceAfter.isAcceptableOrUnknown(
+          data['balance_after']!,
+          _balanceAfterMeta,
+        ),
+      );
     }
     return context;
   }
@@ -1864,11 +1932,11 @@ class $ProviderTransactionsTable extends ProviderTransactions
       tillId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}till_id'],
-      )!,
-      providerReference: attachedDatabase.typeMapping.read(
+      ),
+      sessionId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}provider_reference'],
-      )!,
+        data['${effectivePrefix}session_id'],
+      ),
       network: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}network'],
@@ -1881,18 +1949,34 @@ class $ProviderTransactionsTable extends ProviderTransactions
         DriftSqlType.double,
         data['${effectivePrefix}amount'],
       )!,
-      smsBody: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}sms_body'],
+      timestamp: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}timestamp'],
       )!,
       status: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}status'],
       )!,
-      receivedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}received_at'],
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source'],
       )!,
+      phoneNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phone_number'],
+      ),
+      reference: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reference'],
+      ),
+      rawSmsId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}raw_sms_id'],
+      ),
+      balanceAfter: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}balance_after'],
+      ),
     );
   }
 
@@ -1905,51 +1989,91 @@ class $ProviderTransactionsTable extends ProviderTransactions
 class ProviderTransaction extends DataClass
     implements Insertable<ProviderTransaction> {
   final String id;
-  final String tillId;
-  final String providerReference;
+  final String? tillId;
+  final String? sessionId;
   final String network;
   final String type;
   final double amount;
-  final String smsBody;
+  final DateTime timestamp;
   final String status;
-  final DateTime receivedAt;
+  final String source;
+  final String? phoneNumber;
+  final String? reference;
+  final String? rawSmsId;
+  final double? balanceAfter;
   const ProviderTransaction({
     required this.id,
-    required this.tillId,
-    required this.providerReference,
+    this.tillId,
+    this.sessionId,
     required this.network,
     required this.type,
     required this.amount,
-    required this.smsBody,
+    required this.timestamp,
     required this.status,
-    required this.receivedAt,
+    required this.source,
+    this.phoneNumber,
+    this.reference,
+    this.rawSmsId,
+    this.balanceAfter,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
-    map['till_id'] = Variable<String>(tillId);
-    map['provider_reference'] = Variable<String>(providerReference);
+    if (!nullToAbsent || tillId != null) {
+      map['till_id'] = Variable<String>(tillId);
+    }
+    if (!nullToAbsent || sessionId != null) {
+      map['session_id'] = Variable<String>(sessionId);
+    }
     map['network'] = Variable<String>(network);
     map['type'] = Variable<String>(type);
     map['amount'] = Variable<double>(amount);
-    map['sms_body'] = Variable<String>(smsBody);
+    map['timestamp'] = Variable<DateTime>(timestamp);
     map['status'] = Variable<String>(status);
-    map['received_at'] = Variable<DateTime>(receivedAt);
+    map['source'] = Variable<String>(source);
+    if (!nullToAbsent || phoneNumber != null) {
+      map['phone_number'] = Variable<String>(phoneNumber);
+    }
+    if (!nullToAbsent || reference != null) {
+      map['reference'] = Variable<String>(reference);
+    }
+    if (!nullToAbsent || rawSmsId != null) {
+      map['raw_sms_id'] = Variable<String>(rawSmsId);
+    }
+    if (!nullToAbsent || balanceAfter != null) {
+      map['balance_after'] = Variable<double>(balanceAfter);
+    }
     return map;
   }
 
   ProviderTransactionsCompanion toCompanion(bool nullToAbsent) {
     return ProviderTransactionsCompanion(
       id: Value(id),
-      tillId: Value(tillId),
-      providerReference: Value(providerReference),
+      tillId: tillId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tillId),
+      sessionId: sessionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sessionId),
       network: Value(network),
       type: Value(type),
       amount: Value(amount),
-      smsBody: Value(smsBody),
+      timestamp: Value(timestamp),
       status: Value(status),
-      receivedAt: Value(receivedAt),
+      source: Value(source),
+      phoneNumber: phoneNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(phoneNumber),
+      reference: reference == null && nullToAbsent
+          ? const Value.absent()
+          : Value(reference),
+      rawSmsId: rawSmsId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rawSmsId),
+      balanceAfter: balanceAfter == null && nullToAbsent
+          ? const Value.absent()
+          : Value(balanceAfter),
     );
   }
 
@@ -1960,14 +2084,18 @@ class ProviderTransaction extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ProviderTransaction(
       id: serializer.fromJson<String>(json['id']),
-      tillId: serializer.fromJson<String>(json['tillId']),
-      providerReference: serializer.fromJson<String>(json['providerReference']),
+      tillId: serializer.fromJson<String?>(json['tillId']),
+      sessionId: serializer.fromJson<String?>(json['sessionId']),
       network: serializer.fromJson<String>(json['network']),
       type: serializer.fromJson<String>(json['type']),
       amount: serializer.fromJson<double>(json['amount']),
-      smsBody: serializer.fromJson<String>(json['smsBody']),
+      timestamp: serializer.fromJson<DateTime>(json['timestamp']),
       status: serializer.fromJson<String>(json['status']),
-      receivedAt: serializer.fromJson<DateTime>(json['receivedAt']),
+      source: serializer.fromJson<String>(json['source']),
+      phoneNumber: serializer.fromJson<String?>(json['phoneNumber']),
+      reference: serializer.fromJson<String?>(json['reference']),
+      rawSmsId: serializer.fromJson<String?>(json['rawSmsId']),
+      balanceAfter: serializer.fromJson<double?>(json['balanceAfter']),
     );
   }
   @override
@@ -1975,53 +2103,69 @@ class ProviderTransaction extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
-      'tillId': serializer.toJson<String>(tillId),
-      'providerReference': serializer.toJson<String>(providerReference),
+      'tillId': serializer.toJson<String?>(tillId),
+      'sessionId': serializer.toJson<String?>(sessionId),
       'network': serializer.toJson<String>(network),
       'type': serializer.toJson<String>(type),
       'amount': serializer.toJson<double>(amount),
-      'smsBody': serializer.toJson<String>(smsBody),
+      'timestamp': serializer.toJson<DateTime>(timestamp),
       'status': serializer.toJson<String>(status),
-      'receivedAt': serializer.toJson<DateTime>(receivedAt),
+      'source': serializer.toJson<String>(source),
+      'phoneNumber': serializer.toJson<String?>(phoneNumber),
+      'reference': serializer.toJson<String?>(reference),
+      'rawSmsId': serializer.toJson<String?>(rawSmsId),
+      'balanceAfter': serializer.toJson<double?>(balanceAfter),
     };
   }
 
   ProviderTransaction copyWith({
     String? id,
-    String? tillId,
-    String? providerReference,
+    Value<String?> tillId = const Value.absent(),
+    Value<String?> sessionId = const Value.absent(),
     String? network,
     String? type,
     double? amount,
-    String? smsBody,
+    DateTime? timestamp,
     String? status,
-    DateTime? receivedAt,
+    String? source,
+    Value<String?> phoneNumber = const Value.absent(),
+    Value<String?> reference = const Value.absent(),
+    Value<String?> rawSmsId = const Value.absent(),
+    Value<double?> balanceAfter = const Value.absent(),
   }) => ProviderTransaction(
     id: id ?? this.id,
-    tillId: tillId ?? this.tillId,
-    providerReference: providerReference ?? this.providerReference,
+    tillId: tillId.present ? tillId.value : this.tillId,
+    sessionId: sessionId.present ? sessionId.value : this.sessionId,
     network: network ?? this.network,
     type: type ?? this.type,
     amount: amount ?? this.amount,
-    smsBody: smsBody ?? this.smsBody,
+    timestamp: timestamp ?? this.timestamp,
     status: status ?? this.status,
-    receivedAt: receivedAt ?? this.receivedAt,
+    source: source ?? this.source,
+    phoneNumber: phoneNumber.present ? phoneNumber.value : this.phoneNumber,
+    reference: reference.present ? reference.value : this.reference,
+    rawSmsId: rawSmsId.present ? rawSmsId.value : this.rawSmsId,
+    balanceAfter: balanceAfter.present ? balanceAfter.value : this.balanceAfter,
   );
   ProviderTransaction copyWithCompanion(ProviderTransactionsCompanion data) {
     return ProviderTransaction(
       id: data.id.present ? data.id.value : this.id,
       tillId: data.tillId.present ? data.tillId.value : this.tillId,
-      providerReference: data.providerReference.present
-          ? data.providerReference.value
-          : this.providerReference,
+      sessionId: data.sessionId.present ? data.sessionId.value : this.sessionId,
       network: data.network.present ? data.network.value : this.network,
       type: data.type.present ? data.type.value : this.type,
       amount: data.amount.present ? data.amount.value : this.amount,
-      smsBody: data.smsBody.present ? data.smsBody.value : this.smsBody,
+      timestamp: data.timestamp.present ? data.timestamp.value : this.timestamp,
       status: data.status.present ? data.status.value : this.status,
-      receivedAt: data.receivedAt.present
-          ? data.receivedAt.value
-          : this.receivedAt,
+      source: data.source.present ? data.source.value : this.source,
+      phoneNumber: data.phoneNumber.present
+          ? data.phoneNumber.value
+          : this.phoneNumber,
+      reference: data.reference.present ? data.reference.value : this.reference,
+      rawSmsId: data.rawSmsId.present ? data.rawSmsId.value : this.rawSmsId,
+      balanceAfter: data.balanceAfter.present
+          ? data.balanceAfter.value
+          : this.balanceAfter,
     );
   }
 
@@ -2030,13 +2174,17 @@ class ProviderTransaction extends DataClass
     return (StringBuffer('ProviderTransaction(')
           ..write('id: $id, ')
           ..write('tillId: $tillId, ')
-          ..write('providerReference: $providerReference, ')
+          ..write('sessionId: $sessionId, ')
           ..write('network: $network, ')
           ..write('type: $type, ')
           ..write('amount: $amount, ')
-          ..write('smsBody: $smsBody, ')
+          ..write('timestamp: $timestamp, ')
           ..write('status: $status, ')
-          ..write('receivedAt: $receivedAt')
+          ..write('source: $source, ')
+          ..write('phoneNumber: $phoneNumber, ')
+          ..write('reference: $reference, ')
+          ..write('rawSmsId: $rawSmsId, ')
+          ..write('balanceAfter: $balanceAfter')
           ..write(')'))
         .toString();
   }
@@ -2045,13 +2193,17 @@ class ProviderTransaction extends DataClass
   int get hashCode => Object.hash(
     id,
     tillId,
-    providerReference,
+    sessionId,
     network,
     type,
     amount,
-    smsBody,
+    timestamp,
     status,
-    receivedAt,
+    source,
+    phoneNumber,
+    reference,
+    rawSmsId,
+    balanceAfter,
   );
   @override
   bool operator ==(Object other) =>
@@ -2059,107 +2211,137 @@ class ProviderTransaction extends DataClass
       (other is ProviderTransaction &&
           other.id == this.id &&
           other.tillId == this.tillId &&
-          other.providerReference == this.providerReference &&
+          other.sessionId == this.sessionId &&
           other.network == this.network &&
           other.type == this.type &&
           other.amount == this.amount &&
-          other.smsBody == this.smsBody &&
+          other.timestamp == this.timestamp &&
           other.status == this.status &&
-          other.receivedAt == this.receivedAt);
+          other.source == this.source &&
+          other.phoneNumber == this.phoneNumber &&
+          other.reference == this.reference &&
+          other.rawSmsId == this.rawSmsId &&
+          other.balanceAfter == this.balanceAfter);
 }
 
 class ProviderTransactionsCompanion
     extends UpdateCompanion<ProviderTransaction> {
   final Value<String> id;
-  final Value<String> tillId;
-  final Value<String> providerReference;
+  final Value<String?> tillId;
+  final Value<String?> sessionId;
   final Value<String> network;
   final Value<String> type;
   final Value<double> amount;
-  final Value<String> smsBody;
+  final Value<DateTime> timestamp;
   final Value<String> status;
-  final Value<DateTime> receivedAt;
+  final Value<String> source;
+  final Value<String?> phoneNumber;
+  final Value<String?> reference;
+  final Value<String?> rawSmsId;
+  final Value<double?> balanceAfter;
   final Value<int> rowid;
   const ProviderTransactionsCompanion({
     this.id = const Value.absent(),
     this.tillId = const Value.absent(),
-    this.providerReference = const Value.absent(),
+    this.sessionId = const Value.absent(),
     this.network = const Value.absent(),
     this.type = const Value.absent(),
     this.amount = const Value.absent(),
-    this.smsBody = const Value.absent(),
+    this.timestamp = const Value.absent(),
     this.status = const Value.absent(),
-    this.receivedAt = const Value.absent(),
+    this.source = const Value.absent(),
+    this.phoneNumber = const Value.absent(),
+    this.reference = const Value.absent(),
+    this.rawSmsId = const Value.absent(),
+    this.balanceAfter = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ProviderTransactionsCompanion.insert({
     required String id,
-    required String tillId,
-    required String providerReference,
+    this.tillId = const Value.absent(),
+    this.sessionId = const Value.absent(),
     required String network,
     required String type,
     required double amount,
-    required String smsBody,
+    required DateTime timestamp,
     required String status,
-    required DateTime receivedAt,
+    required String source,
+    this.phoneNumber = const Value.absent(),
+    this.reference = const Value.absent(),
+    this.rawSmsId = const Value.absent(),
+    this.balanceAfter = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
-       tillId = Value(tillId),
-       providerReference = Value(providerReference),
        network = Value(network),
        type = Value(type),
        amount = Value(amount),
-       smsBody = Value(smsBody),
+       timestamp = Value(timestamp),
        status = Value(status),
-       receivedAt = Value(receivedAt);
+       source = Value(source);
   static Insertable<ProviderTransaction> custom({
     Expression<String>? id,
     Expression<String>? tillId,
-    Expression<String>? providerReference,
+    Expression<String>? sessionId,
     Expression<String>? network,
     Expression<String>? type,
     Expression<double>? amount,
-    Expression<String>? smsBody,
+    Expression<DateTime>? timestamp,
     Expression<String>? status,
-    Expression<DateTime>? receivedAt,
+    Expression<String>? source,
+    Expression<String>? phoneNumber,
+    Expression<String>? reference,
+    Expression<String>? rawSmsId,
+    Expression<double>? balanceAfter,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (tillId != null) 'till_id': tillId,
-      if (providerReference != null) 'provider_reference': providerReference,
+      if (sessionId != null) 'session_id': sessionId,
       if (network != null) 'network': network,
       if (type != null) 'type': type,
       if (amount != null) 'amount': amount,
-      if (smsBody != null) 'sms_body': smsBody,
+      if (timestamp != null) 'timestamp': timestamp,
       if (status != null) 'status': status,
-      if (receivedAt != null) 'received_at': receivedAt,
+      if (source != null) 'source': source,
+      if (phoneNumber != null) 'phone_number': phoneNumber,
+      if (reference != null) 'reference': reference,
+      if (rawSmsId != null) 'raw_sms_id': rawSmsId,
+      if (balanceAfter != null) 'balance_after': balanceAfter,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
   ProviderTransactionsCompanion copyWith({
     Value<String>? id,
-    Value<String>? tillId,
-    Value<String>? providerReference,
+    Value<String?>? tillId,
+    Value<String?>? sessionId,
     Value<String>? network,
     Value<String>? type,
     Value<double>? amount,
-    Value<String>? smsBody,
+    Value<DateTime>? timestamp,
     Value<String>? status,
-    Value<DateTime>? receivedAt,
+    Value<String>? source,
+    Value<String?>? phoneNumber,
+    Value<String?>? reference,
+    Value<String?>? rawSmsId,
+    Value<double?>? balanceAfter,
     Value<int>? rowid,
   }) {
     return ProviderTransactionsCompanion(
       id: id ?? this.id,
       tillId: tillId ?? this.tillId,
-      providerReference: providerReference ?? this.providerReference,
+      sessionId: sessionId ?? this.sessionId,
       network: network ?? this.network,
       type: type ?? this.type,
       amount: amount ?? this.amount,
-      smsBody: smsBody ?? this.smsBody,
+      timestamp: timestamp ?? this.timestamp,
       status: status ?? this.status,
-      receivedAt: receivedAt ?? this.receivedAt,
+      source: source ?? this.source,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      reference: reference ?? this.reference,
+      rawSmsId: rawSmsId ?? this.rawSmsId,
+      balanceAfter: balanceAfter ?? this.balanceAfter,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2173,8 +2355,8 @@ class ProviderTransactionsCompanion
     if (tillId.present) {
       map['till_id'] = Variable<String>(tillId.value);
     }
-    if (providerReference.present) {
-      map['provider_reference'] = Variable<String>(providerReference.value);
+    if (sessionId.present) {
+      map['session_id'] = Variable<String>(sessionId.value);
     }
     if (network.present) {
       map['network'] = Variable<String>(network.value);
@@ -2185,14 +2367,26 @@ class ProviderTransactionsCompanion
     if (amount.present) {
       map['amount'] = Variable<double>(amount.value);
     }
-    if (smsBody.present) {
-      map['sms_body'] = Variable<String>(smsBody.value);
+    if (timestamp.present) {
+      map['timestamp'] = Variable<DateTime>(timestamp.value);
     }
     if (status.present) {
       map['status'] = Variable<String>(status.value);
     }
-    if (receivedAt.present) {
-      map['received_at'] = Variable<DateTime>(receivedAt.value);
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
+    if (phoneNumber.present) {
+      map['phone_number'] = Variable<String>(phoneNumber.value);
+    }
+    if (reference.present) {
+      map['reference'] = Variable<String>(reference.value);
+    }
+    if (rawSmsId.present) {
+      map['raw_sms_id'] = Variable<String>(rawSmsId.value);
+    }
+    if (balanceAfter.present) {
+      map['balance_after'] = Variable<double>(balanceAfter.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -2205,13 +2399,17 @@ class ProviderTransactionsCompanion
     return (StringBuffer('ProviderTransactionsCompanion(')
           ..write('id: $id, ')
           ..write('tillId: $tillId, ')
-          ..write('providerReference: $providerReference, ')
+          ..write('sessionId: $sessionId, ')
           ..write('network: $network, ')
           ..write('type: $type, ')
           ..write('amount: $amount, ')
-          ..write('smsBody: $smsBody, ')
+          ..write('timestamp: $timestamp, ')
           ..write('status: $status, ')
-          ..write('receivedAt: $receivedAt, ')
+          ..write('source: $source, ')
+          ..write('phoneNumber: $phoneNumber, ')
+          ..write('reference: $reference, ')
+          ..write('rawSmsId: $rawSmsId, ')
+          ..write('balanceAfter: $balanceAfter, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2240,18 +2438,18 @@ class $LedgerEventsTable extends LedgerEvents
   late final GeneratedColumn<String> sessionId = GeneratedColumn<String>(
     'session_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _tillIdMeta = const VerificationMeta('tillId');
   @override
   late final GeneratedColumn<String> tillId = GeneratedColumn<String>(
     'till_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
   @override
@@ -2306,6 +2504,26 @@ class $LedgerEventsTable extends LedgerEvents
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _providerTransactionIdMeta =
+      const VerificationMeta('providerTransactionId');
+  @override
+  late final GeneratedColumn<String> providerTransactionId =
+      GeneratedColumn<String>(
+        'provider_transaction_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _noteMeta = const VerificationMeta('note');
+  @override
+  late final GeneratedColumn<String> note = GeneratedColumn<String>(
+    'note',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -2316,6 +2534,8 @@ class $LedgerEventsTable extends LedgerEvents
     floatDelta,
     commissionDelta,
     createdAt,
+    providerTransactionId,
+    note,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2339,16 +2559,12 @@ class $LedgerEventsTable extends LedgerEvents
         _sessionIdMeta,
         sessionId.isAcceptableOrUnknown(data['session_id']!, _sessionIdMeta),
       );
-    } else if (isInserting) {
-      context.missing(_sessionIdMeta);
     }
     if (data.containsKey('till_id')) {
       context.handle(
         _tillIdMeta,
         tillId.isAcceptableOrUnknown(data['till_id']!, _tillIdMeta),
       );
-    } else if (isInserting) {
-      context.missing(_tillIdMeta);
     }
     if (data.containsKey('type')) {
       context.handle(
@@ -2393,6 +2609,21 @@ class $LedgerEventsTable extends LedgerEvents
     } else if (isInserting) {
       context.missing(_createdAtMeta);
     }
+    if (data.containsKey('provider_transaction_id')) {
+      context.handle(
+        _providerTransactionIdMeta,
+        providerTransactionId.isAcceptableOrUnknown(
+          data['provider_transaction_id']!,
+          _providerTransactionIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('note')) {
+      context.handle(
+        _noteMeta,
+        note.isAcceptableOrUnknown(data['note']!, _noteMeta),
+      );
+    }
     return context;
   }
 
@@ -2409,11 +2640,11 @@ class $LedgerEventsTable extends LedgerEvents
       sessionId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}session_id'],
-      )!,
+      ),
       tillId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}till_id'],
-      )!,
+      ),
       type: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}type'],
@@ -2434,6 +2665,14 @@ class $LedgerEventsTable extends LedgerEvents
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
+      providerTransactionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}provider_transaction_id'],
+      ),
+      note: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}note'],
+      ),
     );
   }
 
@@ -2445,47 +2684,69 @@ class $LedgerEventsTable extends LedgerEvents
 
 class LedgerEvent extends DataClass implements Insertable<LedgerEvent> {
   final String id;
-  final String sessionId;
-  final String tillId;
+  final String? sessionId;
+  final String? tillId;
   final String type;
   final double cashDelta;
   final double floatDelta;
   final double commissionDelta;
   final DateTime createdAt;
+  final String? providerTransactionId;
+  final String? note;
   const LedgerEvent({
     required this.id,
-    required this.sessionId,
-    required this.tillId,
+    this.sessionId,
+    this.tillId,
     required this.type,
     required this.cashDelta,
     required this.floatDelta,
     required this.commissionDelta,
     required this.createdAt,
+    this.providerTransactionId,
+    this.note,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
-    map['session_id'] = Variable<String>(sessionId);
-    map['till_id'] = Variable<String>(tillId);
+    if (!nullToAbsent || sessionId != null) {
+      map['session_id'] = Variable<String>(sessionId);
+    }
+    if (!nullToAbsent || tillId != null) {
+      map['till_id'] = Variable<String>(tillId);
+    }
     map['type'] = Variable<String>(type);
     map['cash_delta'] = Variable<double>(cashDelta);
     map['float_delta'] = Variable<double>(floatDelta);
     map['commission_delta'] = Variable<double>(commissionDelta);
     map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || providerTransactionId != null) {
+      map['provider_transaction_id'] = Variable<String>(providerTransactionId);
+    }
+    if (!nullToAbsent || note != null) {
+      map['note'] = Variable<String>(note);
+    }
     return map;
   }
 
   LedgerEventsCompanion toCompanion(bool nullToAbsent) {
     return LedgerEventsCompanion(
       id: Value(id),
-      sessionId: Value(sessionId),
-      tillId: Value(tillId),
+      sessionId: sessionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sessionId),
+      tillId: tillId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tillId),
       type: Value(type),
       cashDelta: Value(cashDelta),
       floatDelta: Value(floatDelta),
       commissionDelta: Value(commissionDelta),
       createdAt: Value(createdAt),
+      providerTransactionId: providerTransactionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(providerTransactionId),
+      note: note == null && nullToAbsent ? const Value.absent() : Value(note),
     );
   }
 
@@ -2496,13 +2757,17 @@ class LedgerEvent extends DataClass implements Insertable<LedgerEvent> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return LedgerEvent(
       id: serializer.fromJson<String>(json['id']),
-      sessionId: serializer.fromJson<String>(json['sessionId']),
-      tillId: serializer.fromJson<String>(json['tillId']),
+      sessionId: serializer.fromJson<String?>(json['sessionId']),
+      tillId: serializer.fromJson<String?>(json['tillId']),
       type: serializer.fromJson<String>(json['type']),
       cashDelta: serializer.fromJson<double>(json['cashDelta']),
       floatDelta: serializer.fromJson<double>(json['floatDelta']),
       commissionDelta: serializer.fromJson<double>(json['commissionDelta']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      providerTransactionId: serializer.fromJson<String?>(
+        json['providerTransactionId'],
+      ),
+      note: serializer.fromJson<String?>(json['note']),
     );
   }
   @override
@@ -2510,34 +2775,44 @@ class LedgerEvent extends DataClass implements Insertable<LedgerEvent> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
-      'sessionId': serializer.toJson<String>(sessionId),
-      'tillId': serializer.toJson<String>(tillId),
+      'sessionId': serializer.toJson<String?>(sessionId),
+      'tillId': serializer.toJson<String?>(tillId),
       'type': serializer.toJson<String>(type),
       'cashDelta': serializer.toJson<double>(cashDelta),
       'floatDelta': serializer.toJson<double>(floatDelta),
       'commissionDelta': serializer.toJson<double>(commissionDelta),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'providerTransactionId': serializer.toJson<String?>(
+        providerTransactionId,
+      ),
+      'note': serializer.toJson<String?>(note),
     };
   }
 
   LedgerEvent copyWith({
     String? id,
-    String? sessionId,
-    String? tillId,
+    Value<String?> sessionId = const Value.absent(),
+    Value<String?> tillId = const Value.absent(),
     String? type,
     double? cashDelta,
     double? floatDelta,
     double? commissionDelta,
     DateTime? createdAt,
+    Value<String?> providerTransactionId = const Value.absent(),
+    Value<String?> note = const Value.absent(),
   }) => LedgerEvent(
     id: id ?? this.id,
-    sessionId: sessionId ?? this.sessionId,
-    tillId: tillId ?? this.tillId,
+    sessionId: sessionId.present ? sessionId.value : this.sessionId,
+    tillId: tillId.present ? tillId.value : this.tillId,
     type: type ?? this.type,
     cashDelta: cashDelta ?? this.cashDelta,
     floatDelta: floatDelta ?? this.floatDelta,
     commissionDelta: commissionDelta ?? this.commissionDelta,
     createdAt: createdAt ?? this.createdAt,
+    providerTransactionId: providerTransactionId.present
+        ? providerTransactionId.value
+        : this.providerTransactionId,
+    note: note.present ? note.value : this.note,
   );
   LedgerEvent copyWithCompanion(LedgerEventsCompanion data) {
     return LedgerEvent(
@@ -2553,6 +2828,10 @@ class LedgerEvent extends DataClass implements Insertable<LedgerEvent> {
           ? data.commissionDelta.value
           : this.commissionDelta,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      providerTransactionId: data.providerTransactionId.present
+          ? data.providerTransactionId.value
+          : this.providerTransactionId,
+      note: data.note.present ? data.note.value : this.note,
     );
   }
 
@@ -2566,7 +2845,9 @@ class LedgerEvent extends DataClass implements Insertable<LedgerEvent> {
           ..write('cashDelta: $cashDelta, ')
           ..write('floatDelta: $floatDelta, ')
           ..write('commissionDelta: $commissionDelta, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('providerTransactionId: $providerTransactionId, ')
+          ..write('note: $note')
           ..write(')'))
         .toString();
   }
@@ -2581,6 +2862,8 @@ class LedgerEvent extends DataClass implements Insertable<LedgerEvent> {
     floatDelta,
     commissionDelta,
     createdAt,
+    providerTransactionId,
+    note,
   );
   @override
   bool operator ==(Object other) =>
@@ -2593,18 +2876,22 @@ class LedgerEvent extends DataClass implements Insertable<LedgerEvent> {
           other.cashDelta == this.cashDelta &&
           other.floatDelta == this.floatDelta &&
           other.commissionDelta == this.commissionDelta &&
-          other.createdAt == this.createdAt);
+          other.createdAt == this.createdAt &&
+          other.providerTransactionId == this.providerTransactionId &&
+          other.note == this.note);
 }
 
 class LedgerEventsCompanion extends UpdateCompanion<LedgerEvent> {
   final Value<String> id;
-  final Value<String> sessionId;
-  final Value<String> tillId;
+  final Value<String?> sessionId;
+  final Value<String?> tillId;
   final Value<String> type;
   final Value<double> cashDelta;
   final Value<double> floatDelta;
   final Value<double> commissionDelta;
   final Value<DateTime> createdAt;
+  final Value<String?> providerTransactionId;
+  final Value<String?> note;
   final Value<int> rowid;
   const LedgerEventsCompanion({
     this.id = const Value.absent(),
@@ -2615,21 +2902,23 @@ class LedgerEventsCompanion extends UpdateCompanion<LedgerEvent> {
     this.floatDelta = const Value.absent(),
     this.commissionDelta = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.providerTransactionId = const Value.absent(),
+    this.note = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   LedgerEventsCompanion.insert({
     required String id,
-    required String sessionId,
-    required String tillId,
+    this.sessionId = const Value.absent(),
+    this.tillId = const Value.absent(),
     required String type,
     required double cashDelta,
     required double floatDelta,
     required double commissionDelta,
     required DateTime createdAt,
+    this.providerTransactionId = const Value.absent(),
+    this.note = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
-       sessionId = Value(sessionId),
-       tillId = Value(tillId),
        type = Value(type),
        cashDelta = Value(cashDelta),
        floatDelta = Value(floatDelta),
@@ -2644,6 +2933,8 @@ class LedgerEventsCompanion extends UpdateCompanion<LedgerEvent> {
     Expression<double>? floatDelta,
     Expression<double>? commissionDelta,
     Expression<DateTime>? createdAt,
+    Expression<String>? providerTransactionId,
+    Expression<String>? note,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2655,19 +2946,24 @@ class LedgerEventsCompanion extends UpdateCompanion<LedgerEvent> {
       if (floatDelta != null) 'float_delta': floatDelta,
       if (commissionDelta != null) 'commission_delta': commissionDelta,
       if (createdAt != null) 'created_at': createdAt,
+      if (providerTransactionId != null)
+        'provider_transaction_id': providerTransactionId,
+      if (note != null) 'note': note,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
   LedgerEventsCompanion copyWith({
     Value<String>? id,
-    Value<String>? sessionId,
-    Value<String>? tillId,
+    Value<String?>? sessionId,
+    Value<String?>? tillId,
     Value<String>? type,
     Value<double>? cashDelta,
     Value<double>? floatDelta,
     Value<double>? commissionDelta,
     Value<DateTime>? createdAt,
+    Value<String?>? providerTransactionId,
+    Value<String?>? note,
     Value<int>? rowid,
   }) {
     return LedgerEventsCompanion(
@@ -2679,6 +2975,9 @@ class LedgerEventsCompanion extends UpdateCompanion<LedgerEvent> {
       floatDelta: floatDelta ?? this.floatDelta,
       commissionDelta: commissionDelta ?? this.commissionDelta,
       createdAt: createdAt ?? this.createdAt,
+      providerTransactionId:
+          providerTransactionId ?? this.providerTransactionId,
+      note: note ?? this.note,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2710,6 +3009,14 @@ class LedgerEventsCompanion extends UpdateCompanion<LedgerEvent> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (providerTransactionId.present) {
+      map['provider_transaction_id'] = Variable<String>(
+        providerTransactionId.value,
+      );
+    }
+    if (note.present) {
+      map['note'] = Variable<String>(note.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2727,6 +3034,8 @@ class LedgerEventsCompanion extends UpdateCompanion<LedgerEvent> {
           ..write('floatDelta: $floatDelta, ')
           ..write('commissionDelta: $commissionDelta, ')
           ..write('createdAt: $createdAt, ')
+          ..write('providerTransactionId: $providerTransactionId, ')
+          ..write('note: $note, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -4205,27 +4514,35 @@ typedef $$DailySessionsTableProcessedTableManager =
 typedef $$ProviderTransactionsTableCreateCompanionBuilder =
     ProviderTransactionsCompanion Function({
       required String id,
-      required String tillId,
-      required String providerReference,
+      Value<String?> tillId,
+      Value<String?> sessionId,
       required String network,
       required String type,
       required double amount,
-      required String smsBody,
+      required DateTime timestamp,
       required String status,
-      required DateTime receivedAt,
+      required String source,
+      Value<String?> phoneNumber,
+      Value<String?> reference,
+      Value<String?> rawSmsId,
+      Value<double?> balanceAfter,
       Value<int> rowid,
     });
 typedef $$ProviderTransactionsTableUpdateCompanionBuilder =
     ProviderTransactionsCompanion Function({
       Value<String> id,
-      Value<String> tillId,
-      Value<String> providerReference,
+      Value<String?> tillId,
+      Value<String?> sessionId,
       Value<String> network,
       Value<String> type,
       Value<double> amount,
-      Value<String> smsBody,
+      Value<DateTime> timestamp,
       Value<String> status,
-      Value<DateTime> receivedAt,
+      Value<String> source,
+      Value<String?> phoneNumber,
+      Value<String?> reference,
+      Value<String?> rawSmsId,
+      Value<double?> balanceAfter,
       Value<int> rowid,
     });
 
@@ -4248,8 +4565,8 @@ class $$ProviderTransactionsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get providerReference => $composableBuilder(
-    column: $table.providerReference,
+  ColumnFilters<String> get sessionId => $composableBuilder(
+    column: $table.sessionId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4268,8 +4585,8 @@ class $$ProviderTransactionsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get smsBody => $composableBuilder(
-    column: $table.smsBody,
+  ColumnFilters<DateTime> get timestamp => $composableBuilder(
+    column: $table.timestamp,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4278,8 +4595,28 @@ class $$ProviderTransactionsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<DateTime> get receivedAt => $composableBuilder(
-    column: $table.receivedAt,
+  ColumnFilters<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get phoneNumber => $composableBuilder(
+    column: $table.phoneNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get reference => $composableBuilder(
+    column: $table.reference,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rawSmsId => $composableBuilder(
+    column: $table.rawSmsId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get balanceAfter => $composableBuilder(
+    column: $table.balanceAfter,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -4303,8 +4640,8 @@ class $$ProviderTransactionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get providerReference => $composableBuilder(
-    column: $table.providerReference,
+  ColumnOrderings<String> get sessionId => $composableBuilder(
+    column: $table.sessionId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -4323,8 +4660,8 @@ class $$ProviderTransactionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get smsBody => $composableBuilder(
-    column: $table.smsBody,
+  ColumnOrderings<DateTime> get timestamp => $composableBuilder(
+    column: $table.timestamp,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -4333,8 +4670,28 @@ class $$ProviderTransactionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<DateTime> get receivedAt => $composableBuilder(
-    column: $table.receivedAt,
+  ColumnOrderings<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get phoneNumber => $composableBuilder(
+    column: $table.phoneNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get reference => $composableBuilder(
+    column: $table.reference,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rawSmsId => $composableBuilder(
+    column: $table.rawSmsId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get balanceAfter => $composableBuilder(
+    column: $table.balanceAfter,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -4354,10 +4711,8 @@ class $$ProviderTransactionsTableAnnotationComposer
   GeneratedColumn<String> get tillId =>
       $composableBuilder(column: $table.tillId, builder: (column) => column);
 
-  GeneratedColumn<String> get providerReference => $composableBuilder(
-    column: $table.providerReference,
-    builder: (column) => column,
-  );
+  GeneratedColumn<String> get sessionId =>
+      $composableBuilder(column: $table.sessionId, builder: (column) => column);
 
   GeneratedColumn<String> get network =>
       $composableBuilder(column: $table.network, builder: (column) => column);
@@ -4368,14 +4723,28 @@ class $$ProviderTransactionsTableAnnotationComposer
   GeneratedColumn<double> get amount =>
       $composableBuilder(column: $table.amount, builder: (column) => column);
 
-  GeneratedColumn<String> get smsBody =>
-      $composableBuilder(column: $table.smsBody, builder: (column) => column);
+  GeneratedColumn<DateTime> get timestamp =>
+      $composableBuilder(column: $table.timestamp, builder: (column) => column);
 
   GeneratedColumn<String> get status =>
       $composableBuilder(column: $table.status, builder: (column) => column);
 
-  GeneratedColumn<DateTime> get receivedAt => $composableBuilder(
-    column: $table.receivedAt,
+  GeneratedColumn<String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<String> get phoneNumber => $composableBuilder(
+    column: $table.phoneNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get reference =>
+      $composableBuilder(column: $table.reference, builder: (column) => column);
+
+  GeneratedColumn<String> get rawSmsId =>
+      $composableBuilder(column: $table.rawSmsId, builder: (column) => column);
+
+  GeneratedColumn<double> get balanceAfter => $composableBuilder(
+    column: $table.balanceAfter,
     builder: (column) => column,
   );
 }
@@ -4424,49 +4793,65 @@ class $$ProviderTransactionsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
-                Value<String> tillId = const Value.absent(),
-                Value<String> providerReference = const Value.absent(),
+                Value<String?> tillId = const Value.absent(),
+                Value<String?> sessionId = const Value.absent(),
                 Value<String> network = const Value.absent(),
                 Value<String> type = const Value.absent(),
                 Value<double> amount = const Value.absent(),
-                Value<String> smsBody = const Value.absent(),
+                Value<DateTime> timestamp = const Value.absent(),
                 Value<String> status = const Value.absent(),
-                Value<DateTime> receivedAt = const Value.absent(),
+                Value<String> source = const Value.absent(),
+                Value<String?> phoneNumber = const Value.absent(),
+                Value<String?> reference = const Value.absent(),
+                Value<String?> rawSmsId = const Value.absent(),
+                Value<double?> balanceAfter = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ProviderTransactionsCompanion(
                 id: id,
                 tillId: tillId,
-                providerReference: providerReference,
+                sessionId: sessionId,
                 network: network,
                 type: type,
                 amount: amount,
-                smsBody: smsBody,
+                timestamp: timestamp,
                 status: status,
-                receivedAt: receivedAt,
+                source: source,
+                phoneNumber: phoneNumber,
+                reference: reference,
+                rawSmsId: rawSmsId,
+                balanceAfter: balanceAfter,
                 rowid: rowid,
               ),
           createCompanionCallback:
               ({
                 required String id,
-                required String tillId,
-                required String providerReference,
+                Value<String?> tillId = const Value.absent(),
+                Value<String?> sessionId = const Value.absent(),
                 required String network,
                 required String type,
                 required double amount,
-                required String smsBody,
+                required DateTime timestamp,
                 required String status,
-                required DateTime receivedAt,
+                required String source,
+                Value<String?> phoneNumber = const Value.absent(),
+                Value<String?> reference = const Value.absent(),
+                Value<String?> rawSmsId = const Value.absent(),
+                Value<double?> balanceAfter = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ProviderTransactionsCompanion.insert(
                 id: id,
                 tillId: tillId,
-                providerReference: providerReference,
+                sessionId: sessionId,
                 network: network,
                 type: type,
                 amount: amount,
-                smsBody: smsBody,
+                timestamp: timestamp,
                 status: status,
-                receivedAt: receivedAt,
+                source: source,
+                phoneNumber: phoneNumber,
+                reference: reference,
+                rawSmsId: rawSmsId,
+                balanceAfter: balanceAfter,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -4501,25 +4886,29 @@ typedef $$ProviderTransactionsTableProcessedTableManager =
 typedef $$LedgerEventsTableCreateCompanionBuilder =
     LedgerEventsCompanion Function({
       required String id,
-      required String sessionId,
-      required String tillId,
+      Value<String?> sessionId,
+      Value<String?> tillId,
       required String type,
       required double cashDelta,
       required double floatDelta,
       required double commissionDelta,
       required DateTime createdAt,
+      Value<String?> providerTransactionId,
+      Value<String?> note,
       Value<int> rowid,
     });
 typedef $$LedgerEventsTableUpdateCompanionBuilder =
     LedgerEventsCompanion Function({
       Value<String> id,
-      Value<String> sessionId,
-      Value<String> tillId,
+      Value<String?> sessionId,
+      Value<String?> tillId,
       Value<String> type,
       Value<double> cashDelta,
       Value<double> floatDelta,
       Value<double> commissionDelta,
       Value<DateTime> createdAt,
+      Value<String?> providerTransactionId,
+      Value<String?> note,
       Value<int> rowid,
     });
 
@@ -4569,6 +4958,16 @@ class $$LedgerEventsTableFilterComposer
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get providerTransactionId => $composableBuilder(
+    column: $table.providerTransactionId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get note => $composableBuilder(
+    column: $table.note,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -4621,6 +5020,16 @@ class $$LedgerEventsTableOrderingComposer
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get providerTransactionId => $composableBuilder(
+    column: $table.providerTransactionId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$LedgerEventsTableAnnotationComposer
@@ -4659,6 +5068,14 @@ class $$LedgerEventsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get providerTransactionId => $composableBuilder(
+    column: $table.providerTransactionId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => column);
 }
 
 class $$LedgerEventsTableTableManager
@@ -4693,13 +5110,15 @@ class $$LedgerEventsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
-                Value<String> sessionId = const Value.absent(),
-                Value<String> tillId = const Value.absent(),
+                Value<String?> sessionId = const Value.absent(),
+                Value<String?> tillId = const Value.absent(),
                 Value<String> type = const Value.absent(),
                 Value<double> cashDelta = const Value.absent(),
                 Value<double> floatDelta = const Value.absent(),
                 Value<double> commissionDelta = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<String?> providerTransactionId = const Value.absent(),
+                Value<String?> note = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LedgerEventsCompanion(
                 id: id,
@@ -4710,18 +5129,22 @@ class $$LedgerEventsTableTableManager
                 floatDelta: floatDelta,
                 commissionDelta: commissionDelta,
                 createdAt: createdAt,
+                providerTransactionId: providerTransactionId,
+                note: note,
                 rowid: rowid,
               ),
           createCompanionCallback:
               ({
                 required String id,
-                required String sessionId,
-                required String tillId,
+                Value<String?> sessionId = const Value.absent(),
+                Value<String?> tillId = const Value.absent(),
                 required String type,
                 required double cashDelta,
                 required double floatDelta,
                 required double commissionDelta,
                 required DateTime createdAt,
+                Value<String?> providerTransactionId = const Value.absent(),
+                Value<String?> note = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LedgerEventsCompanion.insert(
                 id: id,
@@ -4732,6 +5155,8 @@ class $$LedgerEventsTableTableManager
                 floatDelta: floatDelta,
                 commissionDelta: commissionDelta,
                 createdAt: createdAt,
+                providerTransactionId: providerTransactionId,
+                note: note,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

@@ -12,13 +12,12 @@ class DailySessionRepositoryImpl implements DailySessionRepository {
 
   @override
   Future<void> openSession(DailySessionEntity session) async {
-    final active = await database.dailySessionDao
-        .getActiveSession(session.tillId);
+    final active = await database.dailySessionDao.getActiveSession(
+      session.tillId,
+    );
 
     if (active != null) {
-      throw Exception(
-        'An active session already exists for this till.',
-      );
+      throw Exception('An active session already exists for this till.');
     }
 
     await database.dailySessionDao.insertSession(
@@ -35,13 +34,12 @@ class DailySessionRepositoryImpl implements DailySessionRepository {
 
   @override
   Future<void> closeSession(DailySessionEntity session) async {
-    final active = await database.dailySessionDao
-        .getActiveSession(session.tillId);
+    final active = await database.dailySessionDao.getActiveSession(
+      session.tillId,
+    );
 
     if (active == null) {
-      throw Exception(
-        'No active session found for this till.',
-      );
+      throw Exception('No active session found for this till.');
     }
 
     await database.dailySessionDao.updateSession(
@@ -56,8 +54,7 @@ class DailySessionRepositoryImpl implements DailySessionRepository {
 
   @override
   Future<DailySessionEntity?> getActiveSession(String tillId) async {
-    final row = await database.dailySessionDao
-        .getActiveSession(tillId);
+    final row = await database.dailySessionDao.getActiveSession(tillId);
 
     if (row == null) return null;
 

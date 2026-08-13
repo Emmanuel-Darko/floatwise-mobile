@@ -10,32 +10,25 @@ class DailySessionDao extends DatabaseAccessor<AppDatabase>
     with _$DailySessionDaoMixin {
   DailySessionDao(super.db);
 
-  Future<void> insertSession(
-      DailySessionsCompanion session) {
+  Future<void> insertSession(DailySessionsCompanion session) {
     return into(dailySessions).insert(session);
   }
 
-  Future<void> updateSession(
-      DailySession session) {
+  Future<void> updateSession(DailySession session) {
     return update(dailySessions).replace(session);
   }
 
-  Future<List<DailySession>> getSessions(
-      String tillId) {
+  Future<List<DailySession>> getSessions(String tillId) {
     return (select(dailySessions)
           ..where((tbl) => tbl.tillId.equals(tillId))
-          ..orderBy([
-            (tbl) => OrderingTerm.desc(tbl.openedAt),
-          ]))
+          ..orderBy([(tbl) => OrderingTerm.desc(tbl.openedAt)]))
         .get();
   }
 
-  Future<DailySession?> getActiveSession(
-      String tillId) {
-    return (select(dailySessions)
-          ..where((tbl) =>
-              tbl.tillId.equals(tillId) &
-              tbl.status.equals('open')))
+  Future<DailySession?> getActiveSession(String tillId) {
+    return (select(dailySessions)..where(
+          (tbl) => tbl.tillId.equals(tillId) & tbl.status.equals('open'),
+        ))
         .getSingleOrNull();
   }
 }
