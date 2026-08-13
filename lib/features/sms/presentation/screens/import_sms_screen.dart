@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../app/theme/app_colors.dart';
-import '../../domain/services/sms_import_service.dart';
+import '../../domain/models/sms_import_result.dart';
+import '../../domain/models/sms_parse_result.dart';
 import '../providers/sms_import_provider.dart';
+import '../providers/sms_parse_service_provider.dart';
 import '../providers/sms_permission_provider.dart';
 
 enum SmsImportRange {
-  today('From Today', "Recommended for new businesses"),
-  monthToDate('From Start of This Month', 'Import all messages this month'),
-  custom('Custom Date', 'Choose a starting date'),
-  everything('Import Everything', 'May take several minutes');
+  today('Today'),
+  monthToDate('Start of this month'),
+  custom('Custom date'),
+  everything('Everything available');
 
-  const SmsImportRange(this.label, this.description);
+  const SmsImportRange(this.label);
 
   final String label;
-  final String description;
 }
 
 class ImportSmsScreen extends ConsumerStatefulWidget {
@@ -31,7 +33,8 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
   bool _permissionBusy = false;
   bool _importing = false;
   String? _error;
-  ImportResult? _result;
+  SmsImportResult? _result;
+  SmsParseResult? _parseResult;
   SmsImportRange _range = SmsImportRange.today;
   DateTime? _customDate;
 
@@ -42,8 +45,7 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
   }
 
   Future<void> _checkPermission() async {
-    final granted =
-        await ref.read(smsPermissionProvider).hasPermission();
+    final granted = await ref.read(smsPermissionProvider).hasPermission();
     if (mounted) setState(() => _permissionGranted = granted);
   }
 
@@ -53,8 +55,7 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
       _error = null;
     });
 
-    final granted =
-        await ref.read(smsPermissionProvider).requestPermission();
+    final granted = await ref.read(smsPermissionProvider).requestPermission();
 
     if (!mounted) return;
 
@@ -95,12 +96,22 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
       final service = ref.read(smsImportServiceProvider);
       final result = await service.importMessages(from: _fromDate());
 
+      SmsParseResult? parseResult;
+      try {
+        parseResult = await ref
+            .read(smsParseServiceProvider)
+            .parsePendingMessages();
+      } catch (parseError) {
+        parseResult = null;
+      }
+
       if (!mounted) return;
       setState(() {
         _importing = false;
         _result = result;
+        _parseResult = parseResult;
       });
-    } catch (e) {
+    } catch (_) {
       if (!mounted) return;
       setState(() {
         _importing = false;
@@ -109,7 +120,7 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
     }
   }
 
-  void _done() => context.go('/dashboard');
+  void _continue() => context.go('/dashboard');
 
   @override
   Widget build(BuildContext context) {
@@ -126,15 +137,20 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
 
   Widget _body(BuildContext context) {
     final result = _result;
-    if (result != null) return _summary(context, result);
+    if (result != null) {
+      return _summary(context, result, _parseResult);
+    }
 
     if (_importing) {
       return const Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SizedBox(height: 48),
           LinearProgressIndicator(),
-          SizedBox(height: 16),
-          Text('Importing Mobile Money messages…'),
+          SizedBox(height: 24),
+          Text('Importing messages…'),
+          SizedBox(height: 4),
+          Text('Scanning SMS…'),
         ],
       );
     }
@@ -153,32 +169,20 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const SizedBox(height: 16),
-        const Icon(
-          Icons.sms_outlined,
-          size: 64,
-          color: AppColors.primary,
-        ),
+        const Icon(Icons.sms_outlined, size: 64, color: AppColors.primary),
         const SizedBox(height: 16),
         Text(
-          'Welcome to FloatWise!',
+          'Import Mobile Money SMS',
           textAlign: TextAlign.center,
           style: theme.textTheme.headlineSmall,
         ),
         const SizedBox(height: 8),
         Text(
-          "Let's import your Mobile Money transactions.",
+          'FloatWise needs access to your messages to import your '
+          'Mobile Money transactions. Messages stay on your device unless '
+          'you enable sync.',
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: AppColors.textSecondary,
-          ),
-        ),
-        const SizedBox(height: 24),
-        Text(
-          'FloatWise reads messages in the background of this app only. '
-          'Only Mobile Money messages are kept, and they stay on your '
-          'device unless you enable sync.',
-          textAlign: TextAlign.center,
-          style: theme.textTheme.bodySmall?.copyWith(
             color: AppColors.textSecondary,
           ),
         ),
@@ -203,7 +207,7 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
         ),
         const SizedBox(height: 12),
         OutlinedButton(
-          onPressed: _permissionBusy ? null : _done,
+          onPressed: _permissionBusy ? null : _continue,
           child: const Text('Skip for now'),
         ),
       ],
@@ -217,18 +221,15 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const SizedBox(height: 16),
+        Text('Import Mobile Money SMS', style: theme.textTheme.headlineSmall),
+        const SizedBox(height: 4),
         Text(
-          'Welcome to FloatWise! Let’s import your Mobile Money transactions.',
-          style: theme.textTheme.headlineSmall,
-        ),
-        const SizedBox(height: 24),
-        Text(
-          'Choose import range',
-          style: theme.textTheme.labelLarge?.copyWith(
+          'Choose when to start tracking',
+          style: theme.textTheme.bodyMedium?.copyWith(
             color: AppColors.textSecondary,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 24),
         RadioGroup<SmsImportRange>(
           groupValue: _range,
           onChanged: (value) {
@@ -245,7 +246,6 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
                 RadioListTile<SmsImportRange>(
                   value: range,
                   title: Text(range.label),
-                  subtitle: Text(range.description),
                 ),
             ],
           ),
@@ -271,19 +271,24 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
         const SizedBox(height: 24),
         FilledButton(
           onPressed: _importing ? null : _startImport,
-          child: const Text('Start Import'),
+          child: const Text('Import SMS'),
         ),
         const SizedBox(height: 12),
         OutlinedButton(
-          onPressed: _importing ? null : _done,
+          onPressed: _importing ? null : _continue,
           child: const Text('Skip for now'),
         ),
       ],
     );
   }
 
-  Widget _summary(BuildContext context, ImportResult result) {
+  Widget _summary(
+    BuildContext context,
+    SmsImportResult result,
+    SmsParseResult? parseResult,
+  ) {
     final theme = Theme.of(context);
+    final number = NumberFormat.decimalPattern();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -301,30 +306,41 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
           style: theme.textTheme.headlineSmall,
         ),
         const SizedBox(height: 24),
-        _StatRow(label: 'Messages Scanned', value: result.messagesScanned),
-        _StatRow(label: 'Relevant Messages', value: result.relevantMessages),
+        _StatRow(label: 'scanned', value: number.format(result.scanned)),
+        _StatRow(label: 'relevant', value: number.format(result.relevant)),
         _StatRow(
-          label: 'Imported',
-          value: result.imported,
+          label: 'imported',
+          value: number.format(result.imported),
           emphasized: true,
         ),
         _StatRow(
-          label: 'Duplicates Skipped',
-          value: result.duplicatesSkipped,
+          label: 'duplicates skipped',
+          value: number.format(result.duplicates),
         ),
-        const SizedBox(height: 24),
+        if (parseResult != null) ...[
+          const Divider(height: 32),
+          _StatRow(
+            label: 'parsed',
+            value: number.format(parseResult.parsed),
+            emphasized: true,
+          ),
+          _StatRow(
+            label: 'need attention',
+            value: number.format(parseResult.failed),
+          ),
+        ],
+        const SizedBox(height: 16),
         Text(
-          'Ready for parsing.',
+          parseResult == null
+              ? 'Ready for parsing.'
+              : 'Transactions are ready for verification.',
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: AppColors.textSecondary,
           ),
         ),
         const SizedBox(height: 32),
-        FilledButton(
-          onPressed: _done,
-          child: const Text('Done'),
-        ),
+        FilledButton(onPressed: _continue, child: const Text('Continue')),
       ],
     );
   }
@@ -338,7 +354,7 @@ class _StatRow extends StatelessWidget {
   });
 
   final String label;
-  final int value;
+  final String value;
   final bool emphasized;
 
   @override
@@ -347,19 +363,27 @@ class _StatRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
         children: [
+          Text(
+            value,
+            style:
+                (emphasized
+                        ? theme.textTheme.titleMedium
+                        : theme.textTheme.bodyLarge)
+                    ?.copyWith(
+                      fontWeight: emphasized
+                          ? FontWeight.w700
+                          : FontWeight.w600,
+                    ),
+          ),
+          const SizedBox(width: 8),
           Text(
             label,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: AppColors.textSecondary,
-            ),
-          ),
-          Text(
-            value.toString(),
-            style: (emphasized ? theme.textTheme.titleMedium : theme.textTheme.bodyMedium)
-                ?.copyWith(
-              fontWeight: emphasized ? FontWeight.w700 : FontWeight.w600,
             ),
           ),
         ],
