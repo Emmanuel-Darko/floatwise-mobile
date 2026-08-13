@@ -9,11 +9,13 @@ class TransactionSummaryCard extends StatelessWidget {
     required this.deposits,
     required this.withdrawals,
     required this.totalValue,
+    this.needsReviewCount = 0,
   });
 
   final double deposits;
   final double withdrawals;
   final double totalValue;
+  final int needsReviewCount;
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +52,24 @@ class TransactionSummaryCard extends StatelessWidget {
               color: AppColors.textPrimary,
               emphasized: true,
             ),
+            if (needsReviewCount > 0)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Row(
+                  children: [
+                    const Icon(Icons.rule, size: 16, color: AppColors.warning),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        '$needsReviewCount transaction(s) awaiting review',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: AppColors.warning,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
