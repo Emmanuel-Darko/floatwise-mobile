@@ -5,11 +5,7 @@ import '../../../../core/utils/formatters.dart';
 import '../../../daily_session/domain/entities/daily_session_entity.dart';
 
 class SessionCard extends StatelessWidget {
-  const SessionCard({
-    super.key,
-    required this.session,
-    required this.tillName,
-  });
+  const SessionCard({super.key, required this.session, required this.tillName});
 
   final DailySessionEntity? session;
   final String? tillName;
@@ -35,17 +31,11 @@ class SessionCard extends StatelessWidget {
                     color: AppColors.textSecondary,
                   ),
                 ),
-                _StatusChip(
-                  label: active ? 'Open' : 'Closed',
-                  active: active,
-                ),
+                _StatusChip(label: active ? 'Open' : 'Closed', active: active),
               ],
             ),
             const SizedBox(height: 12),
-            Text(
-              tillName ?? '—',
-              style: theme.textTheme.titleLarge,
-            ),
+            Text(tillName ?? '—', style: theme.textTheme.titleLarge),
             const SizedBox(height: 4),
             Text(
               session != null

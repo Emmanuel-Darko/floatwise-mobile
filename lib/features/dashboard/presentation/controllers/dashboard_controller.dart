@@ -34,8 +34,9 @@ class DashboardState {
 class DashboardController extends AsyncNotifier<DashboardState> {
   @override
   Future<DashboardState> build() async {
-    final appConfigRepository =
-        await ref.watch(appConfigRepositoryProvider.future);
+    final appConfigRepository = await ref.watch(
+      appConfigRepositoryProvider.future,
+    );
     final config = await appConfigRepository.getConfig();
 
     final businessId = config.currentBusinessId;
@@ -44,15 +45,16 @@ class DashboardController extends AsyncNotifier<DashboardState> {
 
     BusinessEntity? business;
     if (businessId != null) {
-      business = await ref.watch(businessRepositoryProvider).getById(businessId);
+      business = await ref
+          .watch(businessRepositoryProvider)
+          .getById(businessId);
     }
 
     BranchEntity? branch;
     if (business != null && branchId != null) {
-      final branches =
-          await ref.watch(branchRepositoryProvider).getBusinessBranches(
-                business.id,
-              );
+      final branches = await ref
+          .watch(branchRepositoryProvider)
+          .getBusinessBranches(business.id);
       for (final candidate in branches) {
         if (candidate.id == branchId) {
           branch = candidate;
@@ -68,10 +70,9 @@ class DashboardController extends AsyncNotifier<DashboardState> {
 
     DailySessionEntity? session;
     if (till != null) {
-      session =
-          await ref.watch(dailySessionRepositoryProvider).getActiveSession(
-                till.id,
-              );
+      session = await ref
+          .watch(dailySessionRepositoryProvider)
+          .getActiveSession(till.id);
     }
 
     return DashboardState(

@@ -35,9 +35,9 @@ class BusinessEntity {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'ownerId': ownerId,
-        'createdAt': createdAt.toIso8601String(),
-      };
+    'id': id,
+    'name': name,
+    'ownerId': ownerId,
+    'createdAt': createdAt.toIso8601String(),
+  };
 }

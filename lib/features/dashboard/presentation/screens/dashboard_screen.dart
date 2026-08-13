@@ -22,16 +22,12 @@ class DashboardScreen extends ConsumerWidget {
       body: SafeArea(
         child: dashboardAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stackTrace) => const Center(
-            child: Text('Failed to load dashboard.'),
-          ),
+          error: (error, stackTrace) =>
+              const Center(child: Text('Failed to load dashboard.')),
           data: (state) => SingleChildScrollView(
             child: Column(
               children: [
-                SessionCard(
-                  session: state.session,
-                  tillName: state.till?.name,
-                ),
+                SessionCard(session: state.session, tillName: state.till?.name),
                 BalanceCard(
                   cash: state.session?.openingCash ?? 0,
                   floatBalance: state.session?.openingFloat ?? 0,
@@ -47,8 +43,8 @@ class DashboardScreen extends ConsumerWidget {
                 Text(
                   'FloatWise',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                    color: AppColors.textSecondary,
+                  ),
                 ),
                 const SizedBox(height: 16),
               ],

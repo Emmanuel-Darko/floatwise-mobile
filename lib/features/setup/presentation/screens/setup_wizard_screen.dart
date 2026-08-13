@@ -26,10 +26,7 @@ class _SetupWizardScreenState extends State<SetupWizardScreen> {
       appBar: AppBar(
         title: const Text('Setup'),
         leading: _step > 0
-            ? IconButton(
-                onPressed: _goBack,
-                icon: const Icon(Icons.arrow_back),
-              )
+            ? IconButton(onPressed: _goBack, icon: const Icon(Icons.arrow_back))
             : null,
       ),
       body: SafeArea(

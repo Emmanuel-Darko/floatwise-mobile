@@ -1,9 +1,9 @@
 enum LedgerEventType {
   deposit,
   withdrawal,
- floatPurchase,
+  floatPurchase,
   floatSale,
- expense,
+  expense,
   adjustment,
   commission,
   reversal,

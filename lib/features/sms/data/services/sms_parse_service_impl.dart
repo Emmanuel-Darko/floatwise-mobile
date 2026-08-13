@@ -1,4 +1,5 @@
 import '../../../../core/database/dao/raw_sms_message_dao.dart';
+import '../../domain/entities/parsed_transaction.dart';
 import '../../domain/entities/raw_sms_message_entity.dart';
 import '../../domain/models/sms_parse_result.dart';
 import '../../domain/providers/mobile_money_provider_registry.dart';
@@ -22,6 +23,7 @@ class SmsParseServiceImpl implements SmsParseService {
 
     var parsed = 0;
     var failed = 0;
+    final transactions = <ParsedTransaction>[];
 
     for (final message in messages) {
       final entity = RawSmsMessageEntity(
@@ -66,6 +68,7 @@ class SmsParseServiceImpl implements SmsParseService {
 
         await _rawSmsMessageDao.markParsed(id: entity.id);
         parsed++;
+        transactions.add(result);
       } catch (error) {
         await _rawSmsMessageDao.markParseError(
           id: entity.id,
@@ -79,6 +82,7 @@ class SmsParseServiceImpl implements SmsParseService {
       processed: messages.length,
       parsed: parsed,
       failed: failed,
+      transactions: transactions,
     );
   }
 }

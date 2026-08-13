@@ -53,12 +53,12 @@ class TillEntity {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'branchId': branchId,
-        'name': name,
-        'phoneNumber': phoneNumber,
-        'network': network.name,
-        'status': status.name,
-        'createdAt': createdAt.toIso8601String(),
-      };
+    'id': id,
+    'branchId': branchId,
+    'name': name,
+    'phoneNumber': phoneNumber,
+    'network': network.name,
+    'status': status.name,
+    'createdAt': createdAt.toIso8601String(),
+  };
 }

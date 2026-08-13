@@ -7,6 +7,5 @@ abstract interface class BranchRepository {
 
   Future<void> delete(String id);
 
-  Future<List<BranchEntity>> getBusinessBranches(
-      String businessId);
+  Future<List<BranchEntity>> getBusinessBranches(String businessId);
 }
