@@ -87,7 +87,8 @@ class _TillStepScreenState extends ConsumerState<TillStepScreen> {
                     Wrap(
                       spacing: 8,
                       children: [
-                        for (final network in MobileNetwork.values)
+                        for (final network in MobileNetwork.values
+                            .where((n) => n != MobileNetwork.unknown))
                           ChoiceChip(
                             label: Text(network.shortName),
                             selected: _network == network,

@@ -1,0 +1,1 @@
+Telecel Cash: Transaction Failed. You do not have sufficient balance for this transaction.
