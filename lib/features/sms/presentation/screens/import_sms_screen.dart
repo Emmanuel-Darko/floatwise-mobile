@@ -7,9 +7,9 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../features/transaction/domain/models/transaction_posting_result.dart';
 import '../../../../features/transaction/presentation/providers/transaction_posting_service_provider.dart';
 import '../../../../shared/enums/mobile_network.dart';
+import '../../domain/models/sms_discovery_result.dart';
 import '../../domain/models/sms_import_result.dart';
 import '../../domain/models/sms_parse_result.dart';
-import '../providers/mobile_money_provider_registry_provider.dart';
 import '../providers/sms_import_provider.dart';
 import '../providers/sms_parse_service_provider.dart';
 import '../providers/sms_permission_provider.dart';
@@ -42,13 +42,14 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
   TransactionPostingResult? _postingResult;
   SmsImportRange _range = SmsImportRange.today;
   DateTime? _customDate;
-  Set<MobileNetwork> _selectedProviders = {};
+  bool _discovering = false;
+  SmsDiscoveryResult? _discovery;
+  final Set<String> _selectedSenders = {};
 
   @override
   void initState() {
     super.initState();
     _checkPermission();
-    _selectedProviders = MobileNetwork.values.toSet();
   }
 
   Future<void> _checkPermission() async {
@@ -93,6 +94,33 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
     if (picked != null) setState(() => _customDate = picked);
   }
 
+  Future<void> _scanSenders() async {
+    setState(() {
+      _discovering = true;
+      _error = null;
+    });
+
+    try {
+      final service = ref.read(smsImportServiceProvider);
+      final discovery = await service.discoverSenders(from: _fromDate());
+
+      if (!mounted) return;
+      setState(() {
+        _discovering = false;
+        _discovery = discovery;
+        _selectedSenders
+          ..clear()
+          ..addAll(discovery.senders.map((s) => s.sender));
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _discovering = false;
+        _error = 'Could not scan your messages. Please try again.';
+      });
+    }
+  }
+
   Future<void> _startImport() async {
     setState(() {
       _importing = true;
@@ -101,18 +129,11 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
 
     try {
       final service = ref.read(smsImportServiceProvider);
-      final registry = ref.read(mobileMoneyProviderRegistryProvider);
-
-      final addresses = <String>{};
-      for (final provider in registry.providers) {
-        if (_selectedProviders.contains(provider.provider)) {
-          addresses.addAll(provider.knownSenders);
-        }
-      }
+      final selectedSenders = _selectedSenders.toSet();
 
       final result = await service.importMessages(
         from: _fromDate(),
-        senderAddresses: addresses.isEmpty ? null : addresses,
+        senderAddresses: selectedSenders,
       );
 
       SmsParseResult? parseResult;
@@ -204,8 +225,26 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
       );
     }
 
+    if (_discovering) {
+      return const Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(height: 48),
+          LinearProgressIndicator(),
+          SizedBox(height: 24),
+          Text('Scanning your messages…'),
+          SizedBox(height: 4),
+          Text('Looking for Mobile Money senders…'),
+        ],
+      );
+    }
+
     if (!_permissionGranted) {
       return _permissionPrompt(context);
+    }
+
+    if (_discovery != null) {
+      return _senderSelection(context);
     }
 
     return _rangeSelection(context);
@@ -313,15 +352,14 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
         Text('Choose senders to import', style: theme.textTheme.titleMedium),
         const SizedBox(height: 4),
         Text(
-          'Only the selected networks will be scanned.',
+          'Scan your messages to find the Mobile Money senders you have.',
           style: theme.textTheme.bodySmall?.copyWith(
             color: AppColors.textSecondary,
           ),
         ),
         const SizedBox(height: 8),
-        ..._providerToggles(context),
         if (_error != null) ...[
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           Text(
             _error!,
             textAlign: TextAlign.center,
@@ -330,8 +368,8 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
         ],
         const SizedBox(height: 24),
         FilledButton(
-          onPressed: _importing ? null : _startImport,
-          child: const Text('Import SMS'),
+          onPressed: _discovering ? null : _scanSenders,
+          child: const Text('Scan Messages'),
         ),
         const SizedBox(height: 12),
         OutlinedButton(
@@ -342,34 +380,86 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
     );
   }
 
-  List<Widget> _providerToggles(BuildContext context) {
-    final registry = ref.read(mobileMoneyProviderRegistryProvider);
+  Widget _senderSelection(BuildContext context) {
     final theme = Theme.of(context);
+    final discovery = _discovery!;
 
-    return registry.providers.map((providerDefinition) {
-      final network = providerDefinition.provider;
-      final checked = _selectedProviders.contains(network);
+    final byProvider = <MobileNetwork, List<String>>{};
+    for (final sender in discovery.senders) {
+      byProvider.putIfAbsent(sender.provider, () => []).add(sender.sender);
+    }
 
-      return CheckboxListTile(
-        value: checked,
-        dense: true,
-        contentPadding: EdgeInsets.zero,
-        controlAffinity: ListTileControlAffinity.leading,
-        onChanged: (value) {
-          setState(() {
-            if (value ?? false) {
-              _selectedProviders.add(network);
-            } else {
-              _selectedProviders.remove(network);
-            }
-          });
-        },
-        title: Text(
-          providerDefinition.label,
-          style: theme.textTheme.bodyMedium,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 16),
+        Text('Select senders to import', style: theme.textTheme.headlineSmall),
+        const SizedBox(height: 4),
+        Text(
+          '${discovery.senders.length} Mobile Money sender'
+          '${discovery.senders.length == 1 ? '' : 's'} found in your messages.',
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: AppColors.textSecondary,
+          ),
         ),
-      );
-    }).toList();
+        const SizedBox(height: 24),
+        for (final entry in byProvider.entries) ...[
+          Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 4),
+            child: Text(
+              entry.key.displayName,
+              style: theme.textTheme.titleSmall?.copyWith(
+                color: AppColors.primary,
+              ),
+            ),
+          ),
+          for (final sender in entry.value)
+            CheckboxListTile(
+              value: _selectedSenders.contains(sender),
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+              controlAffinity: ListTileControlAffinity.leading,
+              onChanged: (value) {
+                setState(() {
+                  if (value ?? false) {
+                    _selectedSenders.add(sender);
+                  } else {
+                    _selectedSenders.remove(sender);
+                  }
+                });
+              },
+              title: Text(sender, style: theme.textTheme.bodyMedium),
+            ),
+        ],
+        if (_selectedSenders.isEmpty) ...[
+          const SizedBox(height: 8),
+          Text(
+            'Select at least one sender to import.',
+            style: theme.textTheme.bodySmall?.copyWith(color: AppColors.error),
+          ),
+        ],
+        if (_error != null) ...[
+          const SizedBox(height: 16),
+          Text(
+            _error!,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColors.error),
+          ),
+        ],
+        const SizedBox(height: 24),
+        FilledButton(
+          onPressed: _selectedSenders.isEmpty
+              ? null
+              : (_importing ? null : _startImport),
+          child: const Text('Import SMS'),
+        ),
+        const SizedBox(height: 12),
+        OutlinedButton(
+          onPressed: () => setState(() => _discovery = null),
+          child: const Text('Change date range'),
+        ),
+      ],
+    );
   }
 
   Widget _summary(
