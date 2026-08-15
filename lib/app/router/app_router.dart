@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/close_day/presentation/screens/close_day_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/setup/presentation/screens/setup_wizard_screen.dart';
 import '../../features/sms/presentation/screens/import_sms_screen.dart';
@@ -36,6 +37,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/setup',
         builder: (context, state) => const SetupWizardScreen(),
+      ),
+      GoRoute(
+        path: '/close-day',
+        builder: (context, state) => const CloseDayScreen(),
       ),
       GoRoute(
         path: '/sms/import',
