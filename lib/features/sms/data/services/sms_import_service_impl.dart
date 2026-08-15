@@ -22,8 +22,14 @@ class SmsImportServiceImpl implements SmsImportService {
   final RawSmsMessageDao _rawSmsMessageDao;
 
   @override
-  Future<SmsImportResult> importMessages({required DateTime from}) async {
-    final messages = await _reader.readMessages(from: from);
+  Future<SmsImportResult> importMessages({
+    required DateTime from,
+    Set<String>? senderAddresses,
+  }) async {
+    final messages = await _reader.readMessages(
+      from: from,
+      senderAddresses: senderAddresses,
+    );
 
     const uuid = Uuid();
     final now = DateTime.now();

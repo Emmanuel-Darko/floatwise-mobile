@@ -6,8 +6,10 @@ import 'package:intl/intl.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../features/transaction/domain/models/transaction_posting_result.dart';
 import '../../../../features/transaction/presentation/providers/transaction_posting_service_provider.dart';
+import '../../../../shared/enums/mobile_network.dart';
 import '../../domain/models/sms_import_result.dart';
 import '../../domain/models/sms_parse_result.dart';
+import '../providers/mobile_money_provider_registry_provider.dart';
 import '../providers/sms_import_provider.dart';
 import '../providers/sms_parse_service_provider.dart';
 import '../providers/sms_permission_provider.dart';
@@ -40,11 +42,13 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
   TransactionPostingResult? _postingResult;
   SmsImportRange _range = SmsImportRange.today;
   DateTime? _customDate;
+  Set<MobileNetwork> _selectedProviders = {};
 
   @override
   void initState() {
     super.initState();
     _checkPermission();
+    _selectedProviders = MobileNetwork.values.toSet();
   }
 
   Future<void> _checkPermission() async {
@@ -97,7 +101,19 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
 
     try {
       final service = ref.read(smsImportServiceProvider);
-      final result = await service.importMessages(from: _fromDate());
+      final registry = ref.read(mobileMoneyProviderRegistryProvider);
+
+      final addresses = <String>{};
+      for (final provider in registry.providers) {
+        if (_selectedProviders.contains(provider.provider)) {
+          addresses.addAll(provider.knownSenders);
+        }
+      }
+
+      final result = await service.importMessages(
+        from: _fromDate(),
+        senderAddresses: addresses.isEmpty ? null : addresses,
+      );
 
       SmsParseResult? parseResult;
       try {
@@ -293,6 +309,17 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
               ),
             ),
           ),
+        const Divider(height: 32),
+        Text('Choose senders to import', style: theme.textTheme.titleMedium),
+        const SizedBox(height: 4),
+        Text(
+          'Only the selected networks will be scanned.',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: AppColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ..._providerToggles(context),
         if (_error != null) ...[
           const SizedBox(height: 16),
           Text(
@@ -313,6 +340,36 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
         ),
       ],
     );
+  }
+
+  List<Widget> _providerToggles(BuildContext context) {
+    final registry = ref.read(mobileMoneyProviderRegistryProvider);
+    final theme = Theme.of(context);
+
+    return registry.providers.map((providerDefinition) {
+      final network = providerDefinition.provider;
+      final checked = _selectedProviders.contains(network);
+
+      return CheckboxListTile(
+        value: checked,
+        dense: true,
+        contentPadding: EdgeInsets.zero,
+        controlAffinity: ListTileControlAffinity.leading,
+        onChanged: (value) {
+          setState(() {
+            if (value ?? false) {
+              _selectedProviders.add(network);
+            } else {
+              _selectedProviders.remove(network);
+            }
+          });
+        },
+        title: Text(
+          providerDefinition.label,
+          style: theme.textTheme.bodyMedium,
+        ),
+      );
+    }).toList();
   }
 
   Widget _summary(

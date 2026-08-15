@@ -11,5 +11,8 @@ class DeviceSmsMessage {
 }
 
 abstract interface class DeviceSmsReader {
-  Future<List<DeviceSmsMessage>> readMessages({required DateTime from});
+  Future<List<DeviceSmsMessage>> readMessages({
+    required DateTime from,
+    Set<String>? senderAddresses,
+  });
 }
