@@ -1,20 +1,16 @@
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:floatwise/core/database/app_database.dart';
-import 'package:floatwise/features/sms/data/providers/airteltigo_provider.dart';
-import 'package:floatwise/features/sms/data/providers/mtn_provider.dart';
-import 'package:floatwise/features/sms/data/providers/telecel_provider.dart';
 import 'package:floatwise/features/sms/data/services/sms_import_service_impl.dart';
-import 'package:floatwise/features/sms/domain/providers/mobile_money_provider_registry.dart';
 import 'package:floatwise/features/sms/domain/services/device_sms_reader.dart';
 import 'package:floatwise/features/sms/domain/services/sms_import_service.dart';
-import 'package:floatwise/shared/enums/mobile_network.dart';
 
 class FakeReader implements DeviceSmsReader {
   FakeReader(this.messages);
 
   final List<DeviceSmsMessage> messages;
 
+  DateTime? lastFrom;
   Set<String>? lastUsedAddresses;
 
   @override
@@ -22,6 +18,7 @@ class FakeReader implements DeviceSmsReader {
     required DateTime from,
     Set<String>? senderAddresses,
   }) async {
+    lastFrom = from;
     lastUsedAddresses = senderAddresses;
     return messages;
   }
@@ -31,22 +28,16 @@ void main() {
   late AppDatabase database;
   late FakeReader reader;
   late SmsImportService service;
-  late MobileMoneyProviderRegistry registry;
 
   setUp(() {
     database = AppDatabase(NativeDatabase.memory());
-    registry = MobileMoneyProviderRegistry([
-      MtnProvider(),
-      TelecelProvider(),
-      AirtelTigoProvider(),
-    ]);
   });
 
   tearDown(() async {
     await database.close();
   });
 
-  test('discovers distinct relevant senders from the inbox', () async {
+  test('discovers every distinct sender regardless of relevance', () async {
     reader = FakeReader([
       DeviceSmsMessage(
         sender: 'MTN Momo',
@@ -57,15 +48,12 @@ void main() {
       ),
       DeviceSmsMessage(
         sender: 'MTN Momo',
-        body:
-            'Momo: You have sent GHS 40.00 to Ama Serwaa (0552000000). '
-            'Transaction ID: XKW7QPLR2N',
+        body: 'MTN: Win with MoMo. Dial *170# to play. T&Cs apply.',
         receivedAt: DateTime(2026, 8, 15, 11),
       ),
       DeviceSmsMessage(
         sender: 'Telecel Cash',
-        body:
-            'Telecel Cash: Cash withdrawn. GHS 100.00. New balance GHS 120.00.',
+        body: 'Telecel Cash: Your balance is GHS 220.00.',
         receivedAt: DateTime(2026, 8, 15, 12),
       ),
       DeviceSmsMessage(
@@ -76,22 +64,29 @@ void main() {
     ]);
     service = SmsImportServiceImpl(
       reader: reader,
-      registry: registry,
       rawSmsMessageDao: database.rawSmsMessageDao,
     );
 
-    final result = await service.discoverSenders(from: DateTime(2026, 1, 1));
+    final result = await service.discoverSenders();
 
-    expect(result.messages.length, 4);
     expect(
       result.senders.map((s) => s.sender),
-      containsAll(<String>['MTN Momo', 'Telecel Cash']),
+      containsAll(<String>['MTN Momo', 'Telecel Cash', 'Ghost Bank']),
     );
-    expect(result.senders, isNot(contains('Ghost Bank')));
-    expect(
-      result.senders.firstWhere((s) => s.sender == 'MTN Momo').provider,
-      MobileNetwork.mtn,
+    expect(result.senders.length, 3);
+  });
+
+  test('discovery scans the full inbox', () async {
+    reader = FakeReader(const []);
+    service = SmsImportServiceImpl(
+      reader: reader,
+      rawSmsMessageDao: database.rawSmsMessageDao,
     );
+
+    await service.discoverSenders();
+
+    expect(reader.lastFrom, DateTime(1970));
+    expect(reader.lastUsedAddresses, isNull);
   });
 
   test('imports only messages from selected senders', () async {
@@ -112,12 +107,11 @@ void main() {
       DeviceSmsMessage(
         sender: 'MTN Momo',
         body: 'MTN: Win with MoMo. Dial *170# to play. T&Cs apply.',
-        receivedAt: DateTime(2026, 8, 15, 10),
+        receivedAt: DateTime(2026, 8, 15, 11),
       ),
     ]);
     service = SmsImportServiceImpl(
       reader: reader,
-      registry: registry,
       rawSmsMessageDao: database.rawSmsMessageDao,
     );
 
@@ -126,11 +120,40 @@ void main() {
       senderAddresses: const {'MTN Momo'},
     );
 
-    expect(result.scanned, 3);
-    expect(result.relevant, 1);
-    expect(result.imported, 1);
+    expect(result.scanned, 2);
+    expect(result.imported, 2);
     expect(result.duplicates, 0);
   });
+
+  test(
+    'imports all messages from selected senders including non-momo',
+    () async {
+      reader = FakeReader([
+        DeviceSmsMessage(
+          sender: 'MTN Momo',
+          body: 'MTN: Win with MoMo. Dial *170# to play. T&Cs apply.',
+          receivedAt: DateTime(2026, 8, 15, 11),
+        ),
+        DeviceSmsMessage(
+          sender: 'Ghost Bank',
+          body: 'Your OTP for login is 123456.',
+          receivedAt: DateTime(2026, 8, 15, 10),
+        ),
+      ]);
+      service = SmsImportServiceImpl(
+        reader: reader,
+        rawSmsMessageDao: database.rawSmsMessageDao,
+      );
+
+      final result = await service.importMessages(
+        from: DateTime(2026, 1, 1),
+        senderAddresses: const {'MTN Momo', 'Ghost Bank'},
+      );
+
+      expect(result.scanned, 2);
+      expect(result.imported, 2);
+    },
+  );
 
   test('skips duplicate messages by hash', () async {
     reader = FakeReader([
@@ -144,7 +167,6 @@ void main() {
     ]);
     service = SmsImportServiceImpl(
       reader: reader,
-      registry: registry,
       rawSmsMessageDao: database.rawSmsMessageDao,
     );
 

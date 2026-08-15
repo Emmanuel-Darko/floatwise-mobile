@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../features/transaction/domain/models/transaction_posting_result.dart';
 import '../../../../features/transaction/presentation/providers/transaction_posting_service_provider.dart';
-import '../../../../shared/enums/mobile_network.dart';
 import '../../domain/models/sms_discovery_result.dart';
 import '../../domain/models/sms_import_result.dart';
 import '../../domain/models/sms_parse_result.dart';
@@ -102,7 +101,7 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
 
     try {
       final service = ref.read(smsImportServiceProvider);
-      final discovery = await service.discoverSenders(from: _fromDate());
+      final discovery = await service.discoverSenders();
 
       if (!mounted) return;
       setState(() {
@@ -384,11 +383,6 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
     final theme = Theme.of(context);
     final discovery = _discovery!;
 
-    final byProvider = <MobileNetwork, List<String>>{};
-    for (final sender in discovery.senders) {
-      byProvider.putIfAbsent(sender.provider, () => []).add(sender.sender);
-    }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -396,41 +390,30 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
         Text('Select senders to import', style: theme.textTheme.headlineSmall),
         const SizedBox(height: 4),
         Text(
-          '${discovery.senders.length} Mobile Money sender'
+          '${discovery.senders.length} sender'
           '${discovery.senders.length == 1 ? '' : 's'} found in your messages.',
           style: theme.textTheme.bodyMedium?.copyWith(
             color: AppColors.textSecondary,
           ),
         ),
         const SizedBox(height: 24),
-        for (final entry in byProvider.entries) ...[
-          Padding(
-            padding: const EdgeInsets.only(top: 8, bottom: 4),
-            child: Text(
-              entry.key.displayName,
-              style: theme.textTheme.titleSmall?.copyWith(
-                color: AppColors.primary,
-              ),
-            ),
+        for (final sender in discovery.senders)
+          CheckboxListTile(
+            value: _selectedSenders.contains(sender.sender),
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+            controlAffinity: ListTileControlAffinity.leading,
+            onChanged: (value) {
+              setState(() {
+                if (value ?? false) {
+                  _selectedSenders.add(sender.sender);
+                } else {
+                  _selectedSenders.remove(sender.sender);
+                }
+              });
+            },
+            title: Text(sender.sender, style: theme.textTheme.bodyMedium),
           ),
-          for (final sender in entry.value)
-            CheckboxListTile(
-              value: _selectedSenders.contains(sender),
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              controlAffinity: ListTileControlAffinity.leading,
-              onChanged: (value) {
-                setState(() {
-                  if (value ?? false) {
-                    _selectedSenders.add(sender);
-                  } else {
-                    _selectedSenders.remove(sender);
-                  }
-                });
-              },
-              title: Text(sender, style: theme.textTheme.bodyMedium),
-            ),
-        ],
         if (_selectedSenders.isEmpty) ...[
           const SizedBox(height: 8),
           Text(
@@ -488,7 +471,6 @@ class _ImportSmsScreenState extends ConsumerState<ImportSmsScreen> {
         ),
         const SizedBox(height: 24),
         _StatRow(label: 'scanned', value: number.format(result.scanned)),
-        _StatRow(label: 'relevant', value: number.format(result.relevant)),
         _StatRow(
           label: 'imported',
           value: number.format(result.imported),

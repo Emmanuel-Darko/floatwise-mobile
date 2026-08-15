@@ -8,47 +8,33 @@ import '../../../../core/database/dao/raw_sms_message_dao.dart';
 import '../../domain/models/discovered_sender.dart';
 import '../../domain/models/sms_discovery_result.dart';
 import '../../domain/models/sms_import_result.dart';
-import '../../domain/providers/mobile_money_provider_registry.dart';
 import '../../domain/services/device_sms_reader.dart';
 import '../../domain/services/sms_import_service.dart';
-import '../../../../shared/enums/mobile_network.dart';
 
 class SmsImportServiceImpl implements SmsImportService {
-  SmsImportServiceImpl({
-    required this.reader,
-    required this.registry,
-    required this.rawSmsMessageDao,
-  });
+  SmsImportServiceImpl({required this.reader, required this.rawSmsMessageDao});
 
   final DeviceSmsReader reader;
-  final MobileMoneyProviderRegistry registry;
   final RawSmsMessageDao rawSmsMessageDao;
 
   @override
-  Future<SmsDiscoveryResult> discoverSenders({required DateTime from}) async {
-    final messages = await reader.readMessages(from: from);
+  Future<SmsDiscoveryResult> discoverSenders() async {
+    final messages = await reader.readMessages(from: _farPast);
 
-    final sendersByAddress = <String, MobileNetwork>{};
+    final senders = <String>{};
     for (final message in messages) {
-      final provider = registry.identify(
-        sender: message.sender,
-        message: message.body,
-      );
-      if (provider == null) continue;
-
-      sendersByAddress.putIfAbsent(
-        message.sender.trim(),
-        () => provider.provider,
-      );
+      final sender = message.sender.trim();
+      if (sender.isEmpty) continue;
+      senders.add(sender);
     }
 
-    final senders = sendersByAddress.entries
-        .map(
-          (entry) => DiscoveredSender(sender: entry.key, provider: entry.value),
-        )
-        .toList();
+    final sorted = senders.toList()
+      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
-    return SmsDiscoveryResult(messages: messages, senders: senders);
+    return SmsDiscoveryResult(
+      messages: messages,
+      senders: sorted.map((s) => DiscoveredSender(sender: s)).toList(),
+    );
   }
 
   @override
@@ -56,27 +42,23 @@ class SmsImportServiceImpl implements SmsImportService {
     required DateTime from,
     required Iterable<String> senderAddresses,
   }) async {
-    final selected = senderAddresses.toSet();
+    final selected = senderAddresses
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toSet();
     final messages = await reader.readMessages(from: from);
 
     const uuid = Uuid();
     final now = DateTime.now();
 
-    var relevant = 0;
+    var scanned = 0;
     var imported = 0;
     var duplicates = 0;
 
     for (final message in messages) {
       if (!selected.contains(message.sender.trim())) continue;
 
-      final provider = registry.identify(
-        sender: message.sender,
-        message: message.body,
-      );
-
-      if (provider == null) continue;
-
-      relevant++;
+      scanned++;
 
       final hash = _computeHash(
         sender: message.sender,
@@ -105,8 +87,7 @@ class SmsImportServiceImpl implements SmsImportService {
     }
 
     return SmsImportResult(
-      scanned: messages.length,
-      relevant: relevant,
+      scanned: scanned,
       imported: imported,
       duplicates: duplicates,
     );
@@ -120,4 +101,6 @@ class SmsImportServiceImpl implements SmsImportService {
     final input = '$sender|$body|${receivedAt.millisecondsSinceEpoch}';
     return sha256.convert(utf8.encode(input)).toString();
   }
+
+  static final DateTime _farPast = DateTime(1970);
 }
