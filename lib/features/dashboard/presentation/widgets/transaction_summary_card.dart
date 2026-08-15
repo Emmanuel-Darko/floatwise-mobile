@@ -10,12 +10,14 @@ class TransactionSummaryCard extends StatelessWidget {
     required this.withdrawals,
     required this.totalValue,
     this.needsReviewCount = 0,
+    this.onReviewTap,
   });
 
   final double deposits;
   final double withdrawals;
   final double totalValue;
   final int needsReviewCount;
+  final VoidCallback? onReviewTap;
 
   @override
   Widget build(BuildContext context) {
@@ -55,19 +57,33 @@ class TransactionSummaryCard extends StatelessWidget {
             if (needsReviewCount > 0)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: Row(
-                  children: [
-                    const Icon(Icons.rule, size: 16, color: AppColors.warning),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        '$needsReviewCount transaction(s) awaiting review',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: AppColors.warning,
+                child: InkWell(
+                  onTap: onReviewTap,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.rule,
+                        size: 16,
+                        color: AppColors.warning,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          '$needsReviewCount transaction(s) awaiting review',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: AppColors.warning,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      if (onReviewTap != null)
+                        const Icon(
+                          Icons.chevron_right,
+                          size: 16,
+                          color: AppColors.warning,
+                        ),
+                    ],
+                  ),
                 ),
               ),
           ],

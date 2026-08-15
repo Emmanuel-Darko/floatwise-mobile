@@ -22,6 +22,24 @@ class ProviderTransactionRepositoryImpl
   }
 
   @override
+  Future<TransactionEntity?> getById(String id) async {
+    final row = await database.providerTransactionDao.getById(id);
+
+    return row == null ? null : _toEntity(row);
+  }
+
+  @override
+  Future<void> updateStatus({
+    required String id,
+    required TransactionStatus status,
+  }) {
+    return database.providerTransactionDao.updateStatus(
+      id: id,
+      status: status.name,
+    );
+  }
+
+  @override
   Future<void> save(
     TransactionEntity transaction, {
     String? tillId,

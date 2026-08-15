@@ -6,6 +6,7 @@ import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/setup/presentation/screens/setup_wizard_screen.dart';
 import '../../features/sms/presentation/screens/import_sms_screen.dart';
 import '../../features/sms/presentation/screens/sms_permission_screen.dart';
+import '../../features/transaction/presentation/screens/transaction_review_screen.dart';
 import '../../features/welcome/presentation/pages/welcome_page.dart';
 import '../../features/settings/presentation/providers/app_config_repository_provider.dart';
 
@@ -49,6 +50,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/sms/permission',
         builder: (context, state) => const SmsPermissionScreen(),
+      ),
+      GoRoute(
+        path: '/transaction/review',
+        builder: (context, state) => const TransactionReviewScreen(),
       ),
     ],
   );

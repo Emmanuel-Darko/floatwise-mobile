@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../providers/dashboard_controller_provider.dart';
@@ -34,6 +35,9 @@ class DashboardScreen extends ConsumerWidget {
                   withdrawals: state.withdrawals,
                   totalValue: state.totalValue,
                   needsReviewCount: state.needsReviewCount,
+                  onReviewTap: state.needsReviewCount > 0
+                      ? () => context.go('/transaction/review')
+                      : null,
                 ),
                 const QuickActionsCard(),
                 RecentActivityCard(transactions: state.recentTransactions),
