@@ -68,7 +68,7 @@ class QuickActionsCard extends ConsumerWidget {
                   child: _ActionButton(
                     icon: Icons.nightlight_outlined,
                     label: 'Close Day',
-                    onPressed: () => _showComingSoon(context, 'Close Day'),
+                    onPressed: () => context.go('/close-day'),
                   ),
                 ),
               ],
