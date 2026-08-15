@@ -23,6 +23,38 @@ class SmsParseUtils {
 
   static final _phoneRegex = RegExp(r'\b0[2-9]\d{8}\b');
 
+  static bool isReversal(String text) {
+    final normalized = text.toLowerCase();
+    return normalized.contains('revers');
+  }
+
+  static bool isCashIn(String text) {
+    final normalized = text.toLowerCase();
+    if (normalized.contains('received') ||
+        normalized.contains('payment received for') ||
+        normalized.contains('received payment for')) {
+      return true;
+    }
+    return false;
+  }
+
+  static bool isCashOut(String text) {
+    final normalized = text.toLowerCase();
+    if (normalized.contains('sent') ||
+        normalized.contains('payment made for') ||
+        normalized.contains('made payment for') ||
+        normalized.contains('cash out') ||
+        normalized.contains('cashout') ||
+        normalized.contains('withdrawn')) {
+      return true;
+    }
+    return false;
+  }
+
+  static bool isTransfer(String text) {
+    return text.toLowerCase().contains('transfer');
+  }
+
   static ParsedTransaction? build(
     MobileNetwork network,
     TransactionType type,

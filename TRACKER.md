@@ -40,8 +40,8 @@ Legend: `✅ Done` · `🔶 Partial` · `⬜ Not started` · `🚫 Deferred`
 | D3 | Duplicate protection (sha256, unique key) | ✅ | |
 | D4 | DeviceSmsReader (paged) | ✅ | |
 | D5 | Provider registry (sender + message characteristics) | ✅ | MTN/Telecel/AirtelTigo |
-| D6 | Parsers per provider | ✅ | |
-| D7 | Parser fixtures (synthetic) + parser tests | ✅ | Swap real samples later |
+| D6 | Parsers per provider (agent + consumer formats) | ✅ | Consumer: payment received/made, cash out (FW-012) |
+| D7 | Parser fixtures (synthetic) + parser tests | ✅ | Agent + consumer; swap real samples later |
 | D8 | Raw SMS kept as audit source (not auto-posted) | ✅ | |
 | D9 | Background/realtime SMS listener | 🚫 Deferred (§26) |
 

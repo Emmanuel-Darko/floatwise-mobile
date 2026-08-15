@@ -144,6 +144,50 @@ void main() {
         ),
       );
     });
+
+    test('parses a consumer payment received (cash in)', () {
+      expectParsed(
+        parser: parser,
+        message: rawMessage(
+          sender: 'MTN Momo',
+          body: fixture('mtn/mtn_consumer_payment_received.txt'),
+        ),
+        type: TransactionType.cashIn,
+        amount: 120.00,
+        reference: 'MTN7648292001',
+        phoneNumber: '0241000000',
+        balanceAfter: 980.50,
+      );
+    });
+
+    test('parses a consumer payment made (cash out)', () {
+      expectParsed(
+        parser: parser,
+        message: rawMessage(
+          sender: 'MTN Momo',
+          body: fixture('mtn/mtn_consumer_payment_made.txt'),
+        ),
+        type: TransactionType.cashOut,
+        amount: 45.00,
+        reference: 'MTN7648292002',
+        phoneNumber: '0551000000',
+        balanceAfter: 935.50,
+      );
+    });
+
+    test('parses a consumer cash out made (cash out)', () {
+      expectParsed(
+        parser: parser,
+        message: rawMessage(
+          sender: 'MTN Momo',
+          body: fixture('mtn/mtn_consumer_cashout.txt'),
+        ),
+        type: TransactionType.cashOut,
+        amount: 80.00,
+        reference: 'MTN7648292003',
+        balanceAfter: 855.50,
+      );
+    });
   });
 
   group('TelecelSmsParser', () {
@@ -210,6 +254,47 @@ void main() {
         ),
       );
     });
+
+    test('parses a consumer payment received (cash in)', () {
+      expectParsed(
+        parser: parser,
+        message: rawMessage(
+          sender: 'Telecel',
+          body: fixture('telecel/telecel_consumer_payment_received.txt'),
+        ),
+        type: TransactionType.cashIn,
+        amount: 120.00,
+        phoneNumber: '0241000000',
+        balanceAfter: 980.50,
+      );
+    });
+
+    test('parses a consumer payment made (cash out)', () {
+      expectParsed(
+        parser: parser,
+        message: rawMessage(
+          sender: 'Telecel',
+          body: fixture('telecel/telecel_consumer_payment_made.txt'),
+        ),
+        type: TransactionType.cashOut,
+        amount: 45.00,
+        phoneNumber: '0551000000',
+        balanceAfter: 935.50,
+      );
+    });
+
+    test('parses a consumer cash out made (cash out)', () {
+      expectParsed(
+        parser: parser,
+        message: rawMessage(
+          sender: 'Telecel',
+          body: fixture('telecel/telecel_consumer_cashout.txt'),
+        ),
+        type: TransactionType.cashOut,
+        amount: 80.00,
+        balanceAfter: 855.50,
+      );
+    });
   });
 
   group('AirtelTigoSmsParser', () {
@@ -266,6 +351,47 @@ void main() {
           sender: 'AirtelTigo',
           body: fixture('airteltigo/at_balance.txt'),
         ),
+      );
+    });
+
+    test('parses a consumer payment received (cash in)', () {
+      expectParsed(
+        parser: parser,
+        message: rawMessage(
+          sender: 'AirtelTigo',
+          body: fixture('airteltigo/at_consumer_payment_received.txt'),
+        ),
+        type: TransactionType.cashIn,
+        amount: 120.00,
+        phoneNumber: '0241000000',
+        balanceAfter: 980.50,
+      );
+    });
+
+    test('parses a consumer payment made (cash out)', () {
+      expectParsed(
+        parser: parser,
+        message: rawMessage(
+          sender: 'AirtelTigo',
+          body: fixture('airteltigo/at_consumer_payment_made.txt'),
+        ),
+        type: TransactionType.cashOut,
+        amount: 45.00,
+        phoneNumber: '0551000000',
+        balanceAfter: 935.50,
+      );
+    });
+
+    test('parses a consumer cash out made (cash out)', () {
+      expectParsed(
+        parser: parser,
+        message: rawMessage(
+          sender: 'AirtelTigo',
+          body: fixture('airteltigo/at_consumer_cashout.txt'),
+        ),
+        type: TransactionType.cashOut,
+        amount: 80.00,
+        balanceAfter: 855.50,
       );
     });
   });

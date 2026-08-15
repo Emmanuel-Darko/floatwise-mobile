@@ -11,22 +11,21 @@ class MtnSmsParser implements SmsParser {
 
   @override
   ParsedTransaction? parse(RawSmsMessageEntity message) {
-    final normalized = message.body.toLowerCase();
+    final body = message.body;
 
-    if (normalized.contains('revers')) {
+    if (SmsParseUtils.isReversal(body)) {
       return SmsParseUtils.build(network, TransactionType.reversal, message);
     }
 
-    if (normalized.contains('received')) {
+    if (SmsParseUtils.isCashIn(body)) {
       return SmsParseUtils.build(network, TransactionType.cashIn, message);
     }
 
-    if (normalized.contains('sent') ||
-        normalized.contains('payment made for')) {
+    if (SmsParseUtils.isCashOut(body)) {
       return SmsParseUtils.build(network, TransactionType.cashOut, message);
     }
 
-    if (normalized.contains('transfer')) {
+    if (SmsParseUtils.isTransfer(body)) {
       return SmsParseUtils.build(network, TransactionType.transfer, message);
     }
 
