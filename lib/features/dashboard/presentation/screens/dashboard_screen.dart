@@ -28,17 +28,15 @@ class DashboardScreen extends ConsumerWidget {
             child: Column(
               children: [
                 SessionCard(session: state.session, tillName: state.till?.name),
-                BalanceCard(
-                  cash: state.session?.openingCash ?? 0,
-                  floatBalance: state.session?.openingFloat ?? 0,
-                ),
+                BalanceCard(cash: state.cash, floatBalance: state.floatBalance),
                 TransactionSummaryCard(
                   deposits: state.deposits,
                   withdrawals: state.withdrawals,
                   totalValue: state.totalValue,
+                  needsReviewCount: state.needsReviewCount,
                 ),
                 const QuickActionsCard(),
-                const RecentActivityCard(),
+                RecentActivityCard(transactions: state.recentTransactions),
                 const SizedBox(height: 24),
                 Text(
                   'FloatWise',
