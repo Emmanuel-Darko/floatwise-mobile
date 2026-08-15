@@ -62,7 +62,7 @@ Legend: `✅ Done` · `🔶 Partial` · `⬜ Not started` · `🚫 Deferred`
 |---|------|--------|-------|
 | F1 | Reconciliation engine | ✅ | balanced/short/excess/unresolved |
 | F2 | Close Day flow + discrepancy confirmation | ✅ | |
-| F3 | Working Reconcile screen | ⬜ | Story 2 |
+| F3 | Working Reconcile screen | ✅ | Story 2 (FW-011) |
 
 ## Phase G — Dashboard
 

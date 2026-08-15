@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/close_day/presentation/screens/close_day_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
+import '../../features/reconciliation/presentation/screens/reconcile_screen.dart';
 import '../../features/setup/presentation/screens/setup_wizard_screen.dart';
 import '../../features/sms/presentation/screens/import_sms_screen.dart';
 import '../../features/sms/presentation/screens/sms_permission_screen.dart';
@@ -54,6 +55,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/transaction/review',
         builder: (context, state) => const TransactionReviewScreen(),
+      ),
+      GoRoute(
+        path: '/reconcile',
+        builder: (context, state) => const ReconcileScreen(),
       ),
     ],
   );

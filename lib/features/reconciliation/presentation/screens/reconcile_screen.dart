@@ -7,25 +7,24 @@ import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../dashboard/presentation/controllers/dashboard_controller.dart';
 import '../../../dashboard/presentation/providers/dashboard_controller_provider.dart';
-import '../../../reconciliation/presentation/widgets/reconciliation_result_panel.dart';
-import '../../domain/models/close_day_result.dart';
-import '../providers/close_day_service_provider.dart';
+import '../../domain/models/reconciliation_result.dart';
+import '../providers/reconciliation_service_provider.dart';
+import '../widgets/reconciliation_result_panel.dart';
 
-class CloseDayScreen extends ConsumerStatefulWidget {
-  const CloseDayScreen({super.key});
+class ReconcileScreen extends ConsumerStatefulWidget {
+  const ReconcileScreen({super.key});
 
   @override
-  ConsumerState<CloseDayScreen> createState() => _CloseDayScreenState();
+  ConsumerState<ReconcileScreen> createState() => _ReconcileScreenState();
 }
 
-class _CloseDayScreenState extends ConsumerState<CloseDayScreen> {
+class _ReconcileScreenState extends ConsumerState<ReconcileScreen> {
   final _cashController = TextEditingController();
   final _floatController = TextEditingController();
 
   bool _busy = false;
-  bool _confirmed = false;
   String? _error;
-  CloseDayResult? _result;
+  ReconciliationResult? _result;
 
   @override
   void dispose() {
@@ -40,7 +39,7 @@ class _CloseDayScreenState extends ConsumerState<CloseDayScreen> {
     return parsed;
   }
 
-  Future<void> _submit({required bool confirmDiscrepancy}) async {
+  Future<void> _runReconciliation() async {
     final cash = _parseAmount(_cashController.text);
     final float = _parseAmount(_floatController.text);
 
@@ -65,29 +64,14 @@ class _CloseDayScreenState extends ConsumerState<CloseDayScreen> {
         return;
       }
 
-      final service = ref.read(closeDayServiceProvider);
-      final result = await service.closeDay(
+      final service = ref.read(reconciliationServiceProvider);
+      final result = await service.reconcile(
         session: session,
         actualCash: cash,
         actualFloat: float,
-        confirmDiscrepancy: confirmDiscrepancy,
       );
 
       if (!mounted) return;
-
-      if (result.closed) {
-        ref.invalidate(dashboardControllerProvider);
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            const SnackBar(
-              content: Text('Day closed successfully.'),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        context.go('/dashboard');
-        return;
-      }
 
       setState(() {
         _busy = false;
@@ -97,7 +81,7 @@ class _CloseDayScreenState extends ConsumerState<CloseDayScreen> {
       if (!mounted) return;
       setState(() {
         _busy = false;
-        _error = 'Failed to close the day. Please try again.';
+        _error = 'Reconciliation failed. Please try again.';
       });
     }
   }
@@ -107,7 +91,7 @@ class _CloseDayScreenState extends ConsumerState<CloseDayScreen> {
     final dashboardAsync = ref.watch(dashboardControllerProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Close Day')),
+      appBar: AppBar(title: const Text('Reconcile')),
       body: SafeArea(
         child: dashboardAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
@@ -127,37 +111,21 @@ class _CloseDayScreenState extends ConsumerState<CloseDayScreen> {
 
   Widget _content(DashboardState state) {
     final theme = Theme.of(context);
-    final session = state.session!;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    state.till?.name ?? 'Till',
-                    style: theme.textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Opened ${Formatters.dateTime(session.openedAt)}',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
+          Text(state.till?.name ?? 'Till', style: theme.textTheme.titleLarge),
+          const SizedBox(height: 4),
+          Text(
+            'Session opened. Expected balances below.',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: AppColors.textSecondary,
             ),
           ),
           const SizedBox(height: 16),
-          Text('Expected Balances', style: theme.textTheme.titleMedium),
-          const SizedBox(height: 8),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -208,53 +176,25 @@ class _CloseDayScreenState extends ConsumerState<CloseDayScreen> {
           ],
           if (_result != null) ...[
             const SizedBox(height: 24),
-            ReconciliationResultPanel(result: _result!.reconciliation),
+            ReconciliationResultPanel(result: _result!),
+            const SizedBox(height: 16),
+            OutlinedButton.icon(
+              onPressed: () => context.go('/close-day'),
+              icon: const Icon(Icons.login),
+              label: const Text('Proceed to Close Day'),
+            ),
           ],
           const SizedBox(height: 32),
-          if (_result != null && !_result!.closed) ...[
-            CheckboxListTile(
-              value: _confirmed,
-              onChanged: (value) {
-                setState(() => _confirmed = value ?? false);
-              },
-              title: Text(
-                'I confirm the discrepancy and want to close the day anyway',
-                style: theme.textTheme.bodyMedium,
-              ),
-              controlAffinity: ListTileControlAffinity.leading,
-              contentPadding: EdgeInsets.zero,
-            ),
-            const SizedBox(height: 12),
-          ],
           FilledButton(
-            onPressed:
-                _busy || (_result != null && !_result!.closed && !_confirmed)
-                ? null
-                : () => _submit(
-                    confirmDiscrepancy: _result?.closed == false && _confirmed,
-                  ),
+            onPressed: _busy ? null : _runReconciliation,
             child: _busy
                 ? const SizedBox(
                     height: 20,
                     width: 20,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Close Day'),
+                : const Text('Run Reconciliation'),
           ),
-          if (_result != null && !_result!.closed) ...[
-            const SizedBox(height: 12),
-            OutlinedButton(
-              onPressed: _busy
-                  ? null
-                  : () {
-                      setState(() {
-                        _result = null;
-                        _confirmed = false;
-                      });
-                    },
-              child: const Text('Edit amounts'),
-            ),
-          ],
         ],
       ),
     );

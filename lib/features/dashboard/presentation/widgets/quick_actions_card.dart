@@ -8,18 +8,7 @@ import '../../../sms/presentation/providers/sms_permission_provider.dart';
 class QuickActionsCard extends ConsumerWidget {
   const QuickActionsCard({super.key});
 
-  void _showComingSoon(BuildContext context, String action) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text('$action — coming soon'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-  }
-
-  Future<void> _importSms(BuildContext context, WidgetRef ref) async {
+  void _importSms(BuildContext context, WidgetRef ref) async {
     final service = ref.read(smsPermissionProvider);
     final hasPermission = await service.hasPermission();
 
@@ -60,7 +49,7 @@ class QuickActionsCard extends ConsumerWidget {
                   child: _ActionButton(
                     icon: Icons.rule_outlined,
                     label: 'Reconcile',
-                    onPressed: () => _showComingSoon(context, 'Reconcile'),
+                    onPressed: () => context.go('/reconcile'),
                   ),
                 ),
                 const SizedBox(width: 12),
