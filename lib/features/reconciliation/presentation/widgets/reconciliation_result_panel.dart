@@ -11,46 +11,68 @@ class ReconciliationResultPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _StatusHeroCard(result: result),
+        const SizedBox(height: 12),
+        ReconciliationDetailsCard(result: result),
+      ],
+    );
+  }
+}
+
+class _StatusHeroCard extends StatelessWidget {
+  const _StatusHeroCard({required this.result});
+
+  final ReconciliationResult result;
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final reconciliation = result;
-    final (label, color, icon) = _statusVisuals(reconciliation.status);
+    final (label, color, icon) = _statusVisuals(result.status);
 
     return Card(
       color: color.withValues(alpha: 0.08),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(icon, size: 20, color: color),
-                const SizedBox(width: 8),
-                Text(
-                  label,
-                  style: theme.textTheme.titleMedium?.copyWith(
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
                     color: color,
-                    fontWeight: FontWeight.w700,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, size: 24, color: Colors.white),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: color,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            ReconciliationDifferenceRow(
-              label: 'Cash',
-              expected: reconciliation.expectedCash,
-              actual: reconciliation.actualCash,
-            ),
-            const SizedBox(height: 8),
-            ReconciliationDifferenceRow(
-              label: 'Float',
-              expected: reconciliation.expectedFloat,
-              actual: reconciliation.actualFloat,
-            ),
-            const Divider(height: 24),
+            const SizedBox(height: 16),
             Text(
-              'Overall ${reconciliation.overallDifference < 0 ? 'shortage' : 'excess'}: '
-              '${Formatters.currency(reconciliation.overallDifference.abs())}',
+              _differenceText(result),
+              style: theme.textTheme.headlineSmall?.copyWith(
+                color: color,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              _supportingText(result),
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: AppColors.textSecondary,
               ),
@@ -64,14 +86,90 @@ class ReconciliationResultPanel extends StatelessWidget {
   (String, Color, IconData) _statusVisuals(ReconciliationStatus status) {
     switch (status) {
       case ReconciliationStatus.balanced:
-        return ('Balanced', AppColors.success, Icons.check_circle_outline);
+        return (
+          'You are balanced',
+          AppColors.success,
+          Icons.check_circle_outline,
+        );
       case ReconciliationStatus.short:
-        return ('Short', AppColors.error, Icons.error_outline);
+        return ('You are short', AppColors.error, Icons.error_outline);
       case ReconciliationStatus.excess:
-        return ('Excess', AppColors.warning, Icons.warning_amber_outlined);
+        return ('You have extra', AppColors.warning, Icons.trending_up);
       case ReconciliationStatus.unresolved:
-        return ('Unresolved', AppColors.warning, Icons.rule_outlined);
+        return ('Check unclear items', AppColors.warning, Icons.rule_outlined);
     }
+  }
+
+  String _differenceText(ReconciliationResult reconciliation) {
+    switch (reconciliation.status) {
+      case ReconciliationStatus.balanced:
+        return Formatters.currency(0);
+      case ReconciliationStatus.short:
+      case ReconciliationStatus.excess:
+        final sign = reconciliation.overallDifference < 0 ? '-' : '+';
+        return '$sign${Formatters.currency(reconciliation.overallDifference.abs())}';
+      case ReconciliationStatus.unresolved:
+        return 'Unresolved';
+    }
+  }
+
+  String _supportingText(ReconciliationResult reconciliation) {
+    switch (reconciliation.status) {
+      case ReconciliationStatus.balanced:
+        return 'Your counted money matches what FloatWise expected.';
+      case ReconciliationStatus.short:
+        final short = Formatters.currency(
+          reconciliation.overallDifference.abs(),
+        );
+        return 'You are short by $short. Count your cash again and confirm.';
+      case ReconciliationStatus.excess:
+        final extra = Formatters.currency(
+          reconciliation.overallDifference.abs(),
+        );
+        return 'You have $extra more than expected. Verify before closing.';
+      case ReconciliationStatus.unresolved:
+        return 'Resolve transactions that still need review before closing.';
+    }
+  }
+}
+
+class ReconciliationDetailsCard extends StatelessWidget {
+  const ReconciliationDetailsCard({super.key, required this.result});
+
+  final ReconciliationResult result;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Breakdown',
+              style: theme.textTheme.titleSmall?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ReconciliationDifferenceRow(
+              label: 'Cash',
+              expected: result.expectedCash,
+              actual: result.actualCash,
+            ),
+            const SizedBox(height: 8),
+            ReconciliationDifferenceRow(
+              label: 'Float',
+              expected: result.expectedFloat,
+              actual: result.actualFloat,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
