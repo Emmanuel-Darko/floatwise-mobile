@@ -8,13 +8,20 @@ import '../../../../core/database/dao/raw_sms_message_dao.dart';
 import '../../domain/models/discovered_sender.dart';
 import '../../domain/models/sms_discovery_result.dart';
 import '../../domain/models/sms_import_result.dart';
+import '../../domain/providers/mobile_money_provider_registry.dart';
 import '../../domain/services/device_sms_reader.dart';
 import '../../domain/services/sms_import_service.dart';
+import '../providers/sms_sender_utils.dart';
 
 class SmsImportServiceImpl implements SmsImportService {
-  SmsImportServiceImpl({required this.reader, required this.rawSmsMessageDao});
+  SmsImportServiceImpl({
+    required this.reader,
+    required this.registry,
+    required this.rawSmsMessageDao,
+  });
 
   final DeviceSmsReader reader;
+  final MobileMoneyProviderRegistry registry;
   final RawSmsMessageDao rawSmsMessageDao;
 
   @override
@@ -25,6 +32,9 @@ class SmsImportServiceImpl implements SmsImportService {
     for (final message in messages) {
       final sender = message.sender.trim();
       if (sender.isEmpty) continue;
+      if (!SmsSenderUtils.isNamedSender(sender)) continue;
+      if (registry.resolveBySender(sender) == null) continue;
+
       senders.add(sender);
     }
 

@@ -10,13 +10,21 @@ class TelecelProvider implements MobileMoneyProviderDefinition {
   String get label => 'Telecel';
 
   @override
-  List<String> get knownSenders => const ['Telecel', 'Telecel Cash'];
+  List<String> get knownSenders => const [
+    'Telecel',
+    'Telecel Cash',
+    'Telecel Money',
+    'Vodafone',
+    'Vodafone Cash',
+  ];
 
   @override
   bool matchesSender(String sender) {
     final normalized = sender.trim().toLowerCase();
 
-    return normalized.contains('telecel') || normalized.contains('vodafone');
+    return normalized.contains('telecel') ||
+        normalized.contains('telecelcash') ||
+        normalized.contains('vodafone');
   }
 
   @override

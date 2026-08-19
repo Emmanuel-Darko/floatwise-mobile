@@ -1,7 +1,11 @@
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:floatwise/core/database/app_database.dart';
+import 'package:floatwise/features/sms/data/providers/airteltigo_provider.dart';
+import 'package:floatwise/features/sms/data/providers/mtn_provider.dart';
+import 'package:floatwise/features/sms/data/providers/telecel_provider.dart';
 import 'package:floatwise/features/sms/data/services/sms_import_service_impl.dart';
+import 'package:floatwise/features/sms/domain/providers/mobile_money_provider_registry.dart';
 import 'package:floatwise/features/sms/domain/services/device_sms_reader.dart';
 import 'package:floatwise/features/sms/domain/services/sms_import_service.dart';
 
@@ -28,16 +32,30 @@ void main() {
   late AppDatabase database;
   late FakeReader reader;
   late SmsImportService service;
+  late MobileMoneyProviderRegistry registry;
 
   setUp(() {
     database = AppDatabase(NativeDatabase.memory());
+    registry = MobileMoneyProviderRegistry([
+      MtnProvider(),
+      TelecelProvider(),
+      AirtelTigoProvider(),
+    ]);
   });
 
   tearDown(() async {
     await database.close();
   });
 
-  test('discovers every distinct sender regardless of relevance', () async {
+  void buildService() {
+    service = SmsImportServiceImpl(
+      reader: reader,
+      registry: registry,
+      rawSmsMessageDao: database.rawSmsMessageDao,
+    );
+  }
+
+  test('discovers named MoMo senders and omits non-named ones', () async {
     reader = FakeReader([
       DeviceSmsMessage(
         sender: 'MTN Momo',
@@ -47,13 +65,16 @@ void main() {
         receivedAt: DateTime(2026, 8, 15, 10),
       ),
       DeviceSmsMessage(
-        sender: 'MTN Momo',
-        body: 'MTN: Win with MoMo. Dial *170# to play. T&Cs apply.',
+        sender: 'MobileMoney',
+        body:
+            'Momo: You have received GHS 50.00 from Kofi Mensah. '
+            'Transaction ID: XKW7QPLR2A',
         receivedAt: DateTime(2026, 8, 15, 11),
       ),
       DeviceSmsMessage(
         sender: 'Telecel Cash',
-        body: 'Telecel Cash: Your balance is GHS 220.00.',
+        body:
+            'Telecel Cash: Cash withdrawn. GHS 100.00. New balance GHS 120.00.',
         receivedAt: DateTime(2026, 8, 15, 12),
       ),
       DeviceSmsMessage(
@@ -61,27 +82,33 @@ void main() {
         body: 'Your OTP for login is 123456.',
         receivedAt: DateTime(2026, 8, 15, 10),
       ),
+      DeviceSmsMessage(
+        sender: '0241000000',
+        body: 'Momo: You have received GHS 10.00.',
+        receivedAt: DateTime(2026, 8, 15, 10),
+      ),
+      DeviceSmsMessage(
+        sender: '*170#',
+        body: 'Welcome to MTN.',
+        receivedAt: DateTime(2026, 8, 15, 10),
+      ),
     ]);
-    service = SmsImportServiceImpl(
-      reader: reader,
-      rawSmsMessageDao: database.rawSmsMessageDao,
-    );
+    buildService();
 
     final result = await service.discoverSenders();
 
     expect(
       result.senders.map((s) => s.sender),
-      containsAll(<String>['MTN Momo', 'Telecel Cash', 'Ghost Bank']),
+      containsAll(<String>['MTN Momo', 'MobileMoney', 'Telecel Cash']),
     );
-    expect(result.senders.length, 3);
+    expect(result.senders.map((s) => s.sender), isNot(contains('Ghost Bank')));
+    expect(result.senders.map((s) => s.sender), isNot(contains('0241000000')));
+    expect(result.senders.map((s) => s.sender), isNot(contains('*170#')));
   });
 
   test('discovery scans the full inbox', () async {
     reader = FakeReader(const []);
-    service = SmsImportServiceImpl(
-      reader: reader,
-      rawSmsMessageDao: database.rawSmsMessageDao,
-    );
+    buildService();
 
     await service.discoverSenders();
 
@@ -110,10 +137,7 @@ void main() {
         receivedAt: DateTime(2026, 8, 15, 11),
       ),
     ]);
-    service = SmsImportServiceImpl(
-      reader: reader,
-      rawSmsMessageDao: database.rawSmsMessageDao,
-    );
+    buildService();
 
     final result = await service.importMessages(
       from: DateTime(2026, 1, 1),
@@ -140,10 +164,7 @@ void main() {
           receivedAt: DateTime(2026, 8, 15, 10),
         ),
       ]);
-      service = SmsImportServiceImpl(
-        reader: reader,
-        rawSmsMessageDao: database.rawSmsMessageDao,
-      );
+      buildService();
 
       final result = await service.importMessages(
         from: DateTime(2026, 1, 1),
@@ -165,10 +186,7 @@ void main() {
         receivedAt: DateTime(2026, 8, 15, 10),
       ),
     ]);
-    service = SmsImportServiceImpl(
-      reader: reader,
-      rawSmsMessageDao: database.rawSmsMessageDao,
-    );
+    buildService();
 
     final first = await service.importMessages(
       from: DateTime(2026, 1, 1),

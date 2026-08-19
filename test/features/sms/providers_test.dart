@@ -34,6 +34,8 @@ void main() {
 
     test('matches known senders', () {
       expect(provider.matchesSender('MTN Momo'), isTrue);
+      expect(provider.matchesSender('MobileMoney'), isTrue);
+      expect(provider.matchesSender('Mobile Money'), isTrue);
       expect(provider.matchesSender('Ghost Bank'), isFalse);
     });
   });

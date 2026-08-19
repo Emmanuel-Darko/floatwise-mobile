@@ -10,7 +10,13 @@ class AirtelTigoProvider implements MobileMoneyProviderDefinition {
   String get label => 'AirtelTigo';
 
   @override
-  List<String> get knownSenders => const ['AirtelTigo', 'AirtelTigo Money'];
+  List<String> get knownSenders => const [
+    'AirtelTigo',
+    'AirtelTigo Money',
+    'Airtel Money',
+    'Tigo Cash',
+    'AT Money',
+  ];
 
   @override
   bool matchesSender(String sender) {
@@ -18,7 +24,8 @@ class AirtelTigoProvider implements MobileMoneyProviderDefinition {
 
     return normalized.contains('airteltigo') ||
         normalized.contains('airtel') ||
-        normalized.contains('tigo');
+        normalized.contains('tigo') ||
+        normalized.contains('at money');
   }
 
   @override

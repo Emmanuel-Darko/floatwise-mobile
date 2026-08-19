@@ -10,13 +10,24 @@ class MtnProvider implements MobileMoneyProviderDefinition {
   String get label => 'MTN';
 
   @override
-  List<String> get knownSenders => const ['MTN MoMo', 'MTN Momo', 'MoMo'];
+  List<String> get knownSenders => const [
+    'MTN MoMo',
+    'MTN Momo',
+    'MoMo',
+    'MobileMoney',
+    'Mobile Money',
+    'MTN MoMo Alerts',
+    'MOMO GH',
+  ];
 
   @override
   bool matchesSender(String sender) {
     final normalized = sender.trim().toLowerCase();
 
-    return normalized.contains('mtn') || normalized.contains('momo');
+    return normalized.contains('mtn') ||
+        normalized.contains('momo') ||
+        normalized.contains('mobile money') ||
+        normalized.contains('mobilemoney');
   }
 
   @override

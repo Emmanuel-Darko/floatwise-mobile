@@ -20,6 +20,22 @@ class MobileMoneyProviderRegistry {
     return null;
   }
 
+  MobileMoneyProviderDefinition? resolveBySender(String sender) {
+    for (final provider in _providers) {
+      if (provider.matchesSender(sender)) return provider;
+    }
+
+    return null;
+  }
+
+  MobileMoneyProviderDefinition? resolveByMessage(String message) {
+    for (final provider in _providers) {
+      if (provider.matchesMessage(message)) return provider;
+    }
+
+    return null;
+  }
+
   List<MobileMoneyProviderDefinition> get providers =>
       List.unmodifiable(_providers);
 }

@@ -37,10 +37,9 @@ class SmsParseServiceImpl implements SmsParseService {
         parseError: message.parseError,
       );
 
-      final provider = _providerRegistry.identify(
-        sender: entity.sender,
-        message: entity.body,
-      );
+      final provider =
+          _providerRegistry.resolveBySender(entity.sender) ??
+          _providerRegistry.resolveByMessage(entity.body);
       final parser = provider == null
           ? null
           : _parserRegistry.parserFor(provider.provider);

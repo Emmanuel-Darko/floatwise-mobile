@@ -10,6 +10,7 @@ import 'package:floatwise/features/sms/data/providers/telecel_provider.dart';
 import 'package:floatwise/features/sms/data/services/sms_parse_service_impl.dart';
 import 'package:floatwise/features/sms/domain/providers/mobile_money_provider_registry.dart';
 import 'package:floatwise/features/sms/domain/providers/sms_parser_registry.dart';
+import 'package:floatwise/shared/enums/mobile_network.dart';
 
 Future<void> insertRawSms({
   required AppDatabase database,
@@ -138,4 +139,27 @@ void main() {
     expect(second.failed, 0);
     expect(second.transactions, isEmpty);
   });
+
+  test(
+    'parses transactions from senders matched by sender name alone',
+    () async {
+      await insertRawSms(
+        database: database,
+        id: 'mobilemoney-1',
+        sender: 'MobileMoney',
+        body:
+            'Momo: You have received GHS 150.00 from Kwame Boateng '
+            '(0241000000). Transaction ID: XKW7QPLR2M',
+        smsHash: 'mobilemoney-hash-1',
+      );
+
+      final result = await buildService().parsePendingMessages();
+
+      expect(result.processed, 1);
+      expect(result.parsed, 1);
+      expect(result.failed, 0);
+      expect(result.transactions.length, 1);
+      expect(result.transactions.first.network, MobileNetwork.mtn);
+    },
+  );
 }

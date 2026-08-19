@@ -39,7 +39,7 @@ Legend: `✅ Done` · `🔶 Partial` · `⬜ Not started` · `🚫 Deferred`
 | D2 | Raw SMS import with date ranges + sender selection | ✅ | FW-008.2 + dynamic sender discovery (FW-013b) |
 | D3 | Duplicate protection (sha256, unique key) | ✅ | |
 | D4 | DeviceSmsReader (paged, sender-address filter) | ✅ | |
-| D5 | Provider registry (sender + message characteristics) | ✅ | Discovery lists all senders; relevance moved to parse stage (FW-013b) |
+| D5 | Provider registry (sender + message characteristics) | ✅ | Expanded sender lists incl. MobileMoney; tolerant parse gate (FW-013b) |
 | D6 | Parsers per provider (agent + consumer formats) | ✅ | Consumer: payment received/made, cash out (FW-012) |
 | D7 | Parser fixtures (synthetic) + parser tests | ✅ | Agent + consumer; swap real samples later |
 | D8 | Raw SMS kept as audit source (not auto-posted) | ✅ | |
