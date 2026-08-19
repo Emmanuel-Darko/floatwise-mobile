@@ -33,7 +33,9 @@ class _StatusHeroCard extends StatelessWidget {
     final (label, color, icon) = _statusVisuals(result.status);
 
     return Card(
-      color: color.withValues(alpha: 0.08),
+      color: Colors.white,
+      elevation: 2,
+      shadowColor: Colors.black.withValues(alpha: 0.12),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
